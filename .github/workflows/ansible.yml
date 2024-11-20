@@ -35,3 +35,12 @@ jobs:
 
       - name: Verify Ansible Installation
         run: ansible --version
+      
+  ejecutaransible:
+    needs: install-ansible
+    runs-on: self-hosted
+    steps:
+      - name: run ls
+        run: ls
+
+      
