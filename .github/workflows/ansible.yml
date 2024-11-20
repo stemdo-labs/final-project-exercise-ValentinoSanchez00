@@ -36,6 +36,6 @@ jobs:
       
   ejecutaransible:
     needs: install-ansible
-    uses: ./.github/workflows/postgre.yaml
+    uses: ./.github/workflows/postgre.yml
 
       
