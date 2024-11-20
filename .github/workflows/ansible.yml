@@ -1,9 +1,7 @@
 name: ansible
 
 on:
-  push:
-    branches:
-      - develop
+  workflow_call:
 
 
 jobs:
