@@ -7,6 +7,7 @@ jobs:
    uses: ./.github/workflows/infraestructure.yaml
    secrets: inherit
   selfhosted:
+   needs: [createInfraestructure]
    uses: ./.github/workflows/selfhosted.yaml
    secrets: inherit
   createAnsible:
