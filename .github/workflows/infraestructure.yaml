@@ -13,6 +13,7 @@ jobs:
     - name: Move to iac
       run: |
         cd iac
+        ls
     
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
