@@ -5,3 +5,4 @@ on:
 jobs:
   createInfraestructure:
    uses: ./.github/workflows/infraestructure.yaml
+   secrets: inherit
