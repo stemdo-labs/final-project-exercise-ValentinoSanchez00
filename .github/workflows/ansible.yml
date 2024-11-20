@@ -36,17 +36,6 @@ jobs:
       
   ejecutaransible:
     needs: install-ansible
-    runs-on: self-hosted
-    steps:
-      - name: entrar a los archivos de ansible
-        run: cd ansible
-
-      - name: ls
-        run: ls
-
-      - name: ejecutar playbook
-        working-directory: ansible
-        run: |
-          ansible-playbook main.yaml -i inventory.ini
+    uses: ./.github/workflows/postgre.yml
 
       
