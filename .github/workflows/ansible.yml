@@ -1,0 +1,37 @@
+name: Install Ansible on Self-Hosted Runner
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  install-ansible:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Update and Upgrade System
+        run: |
+          sudo apt-get update
+          sudo apt-get -y upgrade
+
+      - name: Install Required Dependencies
+        run: |
+          sudo apt-get install -y software-properties-common
+
+      - name: Add Ansible PPA
+        run: |
+          sudo add-apt-repository --yes --update ppa:ansible/ansible
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get install -y ansible
+
+      - name: Verify Ansible Installation
+        run: ansible --version

@@ -4,7 +4,7 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   location              = var.location
   resource_group_name   = var.rg_group
   network_interface_ids = [var.network_interface_ids[count.index < 1 ? 0 : 1]]
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = "Standard_B1ms"
   storage_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
@@ -27,4 +27,5 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
+
 }

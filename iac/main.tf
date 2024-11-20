@@ -9,9 +9,10 @@ terraform {
    backend "azurerm" {
     resource_group_name  = "rg-vsanchez-dvfinlab" # El nombre del resource group que definiste
     storage_account_name = "stavsanchezdvfinlab"   # El nombre del Storage Account
-    container_name       = "tfstateblob"            # El nombre del contenedor
+    container_name       = "tfstatecont"            # El nombre del contenedor
     key                  = "terraform.tfstate"  # El nombre del archivo de estado
-  } 
+  }  
+ 
 }
 provider "azurerm" {
   features {}
@@ -78,8 +79,26 @@ resource "azurerm_container_registry" "acr" {
   }
 }
 
-resource "azurerm_storage_container" "example" {
-  name                  = "tfstateblob"
-  storage_account_name  = "stavsanchezdvfinlab"
-  
+
+resource "azurerm_network_security_group" "securitygroup" {
+  name                = "acceptanceTestSecurityGroup1"
+  location            = var.location
+  resource_group_name = var.rg_group
+
+  security_rule {
+    name                       = "securityRule1"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+}
+resource "azurerm_subnet_network_security_group_association" "assosiaton" {
+  subnet_id                 = module.subnet.subnet_ids[0]
+  network_security_group_id = azurerm_network_security_group.securitygroup.id
 }
