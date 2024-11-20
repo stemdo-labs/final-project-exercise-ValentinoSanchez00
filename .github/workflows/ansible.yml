@@ -3,10 +3,8 @@ name: Install Ansible on Self-Hosted Runner
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - develop
+
 
 jobs:
   install-ansible:
