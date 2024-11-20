@@ -1,0 +1,12 @@
+name: flujo-principal
+
+on:
+  workflow_dispatch:
+
+jobs:
+  CI:
+    uses: ./.github/workflows/CI.yaml
+    secrets: inherit
+
+
+  

@@ -1,12 +1,8 @@
-name: Install Ansible on Self-Hosted Runner
+name: ansible
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_call:
+
 
 jobs:
   install-ansible:
@@ -38,13 +34,6 @@ jobs:
       
   ejecutaransible:
     needs: install-ansible
-    runs-on: self-hosted
-    steps:
-      - name: run ls
-        run: ls
-
-      - name: ejecutar playbook
-        run: |
-          ansible-playbook ./ansible/main.yaml -i ./ansible/inventory.ini
+    uses: ./.github/workflows/postgre.yml
 
       

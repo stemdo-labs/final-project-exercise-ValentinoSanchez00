@@ -1,0 +1,45 @@
+name: Infraestructure
+on:
+  workflow_call:
+
+jobs:
+  azure-login:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Move to iac
+      run: |
+        cd iac
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: latest
+    
+    - name: Login Azure
+      run: |
+        az login --service-principal \
+          -u ${{ secrets.ARM_CLIENT_ID }} \
+          -p ${{ secrets.ARM_CLIENT_SECRET }} \
+          --tenant ${{ secrets.ARM_TENANT_ID }}
+    
+    - name: Set Terraform environment variables
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      run: echo "Environment variables set"
+    
+    - name: Terraform Init
+      run: terraform init
+    
+    - name: Terraform Plan
+      run: terraform plan
+      
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+
