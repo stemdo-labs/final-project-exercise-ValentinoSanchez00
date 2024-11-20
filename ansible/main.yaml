@@ -37,7 +37,11 @@
         insertafter: '^#.*local.*all.*postgres'
         line: 'local   all   postgres   md5'
         state: present
-      notify: Reiniciar PostgreSQL
+    - name: Reiniciar PostgreSQL
+      become: true
+      service:
+        name: postgresql
+        state: restarted
     
     - name: Crear usuario PostgreSQL
       become: true
@@ -48,7 +52,7 @@
         role_attr_flags: SUPERUSER
         state: present
 
-  handlers:
+
     - name: Reiniciar PostgreSQL
       become: true
       service:
