@@ -23,28 +23,20 @@
           - ca-certificates
         state: present
 
-    - name: Instalar PostgreSQL
-      apt:
-        name: 
-          - postgresql
-          - postgresql-contrib
-        state: present
-
     - name: Asegurarse de que PostgreSQL esté habilitado y en ejecución
       service:
         name: postgresql
         state: started
         enabled: yes
 
-    - name: Crear un usuario de PostgreSQL (opcional)
+    - name: Crear usuario PostgreSQL
+      become: true
       become_user: postgres
-      shell: |
-        psql -c "DO \$\$ BEGIN
-                  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '{{ postgres_user }}') THEN
-                      CREATE ROLE {{ postgres_user }} LOGIN PASSWORD '{{ postgres_password }}';
-                      ALTER ROLE {{ postgres_user }} CREATEDB;
-                  END IF;
-                 END \$\$;"
+      postgresql_user:
+        name: "{{ postgres_user }}"
+        password: '"{{ postgres_password }}"'
+        role_attr_flags: SUPERUSER
+        state: present
 
   vars:
     postgres_user: "userpostgres"

@@ -1,4 +1,4 @@
-name: Install Ansible on Self-Hosted Runner
+name: ansible
 
 on:
   push:
