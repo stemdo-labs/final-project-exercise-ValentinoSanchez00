@@ -29,6 +29,23 @@
         state: started
         enabled: yes
 
+    - name: Cambiar configuración de PostgreSQL pg_hba.conf
+      become: yes
+      lineinfile:
+        path: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+        regexp: '^local\s+all\s+postgres\s+\w+'
+        line: 'local   all   postgres   md5'
+        state: present
+      notify: Reiniciar PostgreSQL
+    
+    - name: Reiniciar PostgreSQL
+      become: true
+      service:
+        name: postgresql
+        state: restarted
+      listen: Reiniciar PostgreSQL
+
+
     - name: Crear usuario PostgreSQL
       become: true
       become_user: postgres
