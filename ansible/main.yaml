@@ -6,6 +6,15 @@
     - name: Actualizar el índice de paquetes
       apt:
         update_cache: yes
+    
+    - name: Instalar los paquetes necesarios
+      apt:
+        name:
+          - postgresql
+          - postgresql-contrib
+          - python3-psycopg2
+        state: present
+        update_cache: yes
 
     - name: Instalar las dependencias necesarias
       apt:
@@ -13,21 +22,6 @@
           - wget
           - ca-certificates
         state: present
-
-    - name: Agregar el repositorio oficial de PostgreSQL
-      apt_repository:
-        repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
-        state: present
-        filename: "pgdg"
-
-    - name: Agregar la clave GPG de PostgreSQL
-      apt_key:
-        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-        state: present
-
-    - name: Actualizar el índice de paquetes (de nuevo)
-      apt:
-        update_cache: yes
 
     - name: Instalar PostgreSQL
       apt:
