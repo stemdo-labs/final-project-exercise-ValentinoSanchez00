@@ -1,4 +1,5 @@
 - name: Backup
+  hosts: bd
   become: true
   tasks:
 
