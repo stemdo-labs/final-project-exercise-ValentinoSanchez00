@@ -1,15 +1,16 @@
-- name: Instalar PostgreSQL
+- name: Instalar y configurar PostgreSQL con usuario y base de datos
   hosts: all
   become: yes
   vars:
-    postgres_user: "userpostgres"
-    postgres_password: "admin123"
+    postgres_user: "userpostgres"  # Nombre del usuario que quieres crear
+    postgres_password: "admin123" # Contraseña para el usuario
+    db_name: "dbprueba"           # Nombre de la base de datos
   tasks:
     - name: Actualizar el índice de paquetes
       apt:
         update_cache: yes
-    
-    - name: Instalar los paquetes necesarios
+
+    - name: Instalar PostgreSQL y dependencias
       apt:
         name:
           - postgresql
@@ -17,19 +18,26 @@
           - python3-psycopg2
         state: present
 
-    - name: Detectar la versión instalada de PostgreSQL
-      command: "psql -V"
-      register: postgres_version_output
-
-    - name: Asegurarse de que PostgreSQL esté habilitado y en ejecución
-      service:
-        name: postgresql
-        state: started
-        enabled: yes
-
     - name: Reiniciar PostgreSQL
-      become: true
       service:
         name: postgresql
         state: restarted
-    
+
+    - name: Crear usuario de PostgreSQL
+      postgresql_user:
+        name: "{{ postgres_user }}"
+        password: "{{ postgres_password }}"
+        priv: "ALL" # Asigna todos los privilegios al usuario
+        state: present
+
+    - name: Crear base de datos
+      postgresql_db:
+        name: "{{ db_name }}"
+        owner: "{{ postgres_user }}" # Asigna la base de datos al usuario creado
+        state: present
+
+    - name: Verificar conexión con el nuevo usuario
+      shell: |
+        PGPASSWORD={{ postgres_password }} psql -h localhost -U {{ postgres_user }} -d {{ db_name }} -c '\l'
+      register: query_result
+      changed_when: false
