@@ -55,12 +55,13 @@
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
     - name: Subir el backup al contenedor de Azure
+      local_action:
       azure.azcollection.azure_rm_storageblob:
         resource_group: "rg-vsanchez-dvfinlab"
-        container: "backupbd" 
-        blob: "{{ backup_file | basename }}"
-        file_path: "{{ local_backup_dir }}/{{ backup_file | basename }}"
-        account_name: "stavsanchezdvfinlab" 
+        container_name: "backupbd" 
+        blob_name: "{{ backup_file | basename }}"
+        src: "{{ local_backup_dir }}/{{ backup_file | basename }}"
+        storage_account_name: "stavsanchezdvfinlab" 
         auth_source: "msi" 
       environment:
         AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
