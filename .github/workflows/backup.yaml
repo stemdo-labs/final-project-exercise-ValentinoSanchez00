@@ -7,14 +7,10 @@ jobs:
   callBackup:
     runs-on: self-hosted
     steps:
-      - name: entrar a los archivos de ansible
-        run: cd ansible
-
-      - name: ls
-        run: ls
-        
       - name: llamar al archivo de backup
-        working-directory: ansible
+        
         run: |
+          cd ansible
+          ls -l
           ansible-playbook backup.yaml -i inventory.ini
     
