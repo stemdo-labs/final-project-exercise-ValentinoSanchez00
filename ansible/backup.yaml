@@ -30,6 +30,11 @@
       pip:
         name: packaging
         executable: pip3
+    
+    - name: Instalar ansible[azure] y dependencias
+      pip:
+        name: ansible[azure]
+        executable: pip3
 
     - name: Crear el directorio de backups si no existe
       file:
