@@ -14,9 +14,8 @@
         mode: '0755'
 
     - name: Realizar el backup de la base de datos
-      command:
-        shell: >
-          pg_dump -U {{ db_user }} -h {{ db_host }} {{ db_name }} > /var/backups/postgresql/{{ db_name }}_{{ ansible_date_time.date }}.sql
+      shell: >
+        pg_dump -U {{ db_user }} -h {{ db_host }} {{ db_name }} > /var/backups/postgresql/{{ db_name }}_{{ ansible_date_time.date }}.sql
       become_user: postgres
 
     - name: Confirmar que el archivo de backup se creó
