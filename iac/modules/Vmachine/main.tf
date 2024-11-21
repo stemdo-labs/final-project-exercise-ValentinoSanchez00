@@ -57,7 +57,7 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
     [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-2.320.0.zip", "$PWD")
 
     # Configurar el runner de forma automatizada (sin interacción)
-    ./config.cmd --url https://github.com/stemdo-labs/final-project-exercise-ValentinoSanchez00 --token "${runner_token}" --name "runner-name" --work "_work" --replace
+    ./config.cmd --url https://github.com/stemdo-labs/final-project-exercise-ValentinoSanchez00 --token BDQATEMVIVCXRUASZKXE2OTHH4ATS --name "runner-name" --work "_work" --replace
 
     # Ejecutar el runner automáticamente
     ./run.cmd --once
