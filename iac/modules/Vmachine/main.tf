@@ -32,16 +32,4 @@ resource "azurerm_virtual_machine" "virtual_machine" {
     disable_password_authentication = false
   }
 
-  # Solo aplicar el provisioner cuando count.index == 1
-  provisioner "remote-exec" {
-    when = "create"
-
-    connection {
-      type     = "ssh"
-      user     = "adminuser"
-      password = "Password1234!"
-      host     = var.public_ip.ip_address
-    }
-
-  }
 }
