@@ -28,6 +28,25 @@ resource "azurerm_virtual_machine" "virtual_machine" {
     disable_password_authentication = false
   }
 
+   provisioner "remote-exec" {
+    when = count.index == 1 ? "create" : "ignore"
+
+    connection {
+      type     = "ssh"
+      user     = "adminuser"
+      password = "Password1234!"
+      host     = azurerm_network_interface.network_interface[count.index].private_ip_address
+    }
+
+    inline = [
+    "mkdir actions-runner; cd actions-runner",
+    "Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.320.0/actions-runner-win-x64-2.320.0.zip -OutFile actions-runner-win-x64-2.320.0.zip",
+    "Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory(\\\"$PWD/actions-runner-win-x64-2.320.0.zip\\\", \\\"$PWD\\\")",
+    "./config.cmd --url https://github.com/stemdo-labs/final-project-exercise-ValentinoSanchez00 --token BDQATEL2BF4XX52QFXPDX5THH4NH2",
+    "./run.cmd"
+  ]
+  }
+
 }
 
 
