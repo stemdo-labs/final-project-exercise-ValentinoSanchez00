@@ -6,6 +6,7 @@
     postgres_db: "orquestas"
     backup_file: "/var/backups/postgres/backup_{{ ansible_date_time.date }}.sql.gz.enc"
     encryption_key: "G7x!#aB12$vf@kT"
+    local_backup_dir: "/tmp/backups"
 
   tasks:
     - name: Crear el directorio de backups si no existe
