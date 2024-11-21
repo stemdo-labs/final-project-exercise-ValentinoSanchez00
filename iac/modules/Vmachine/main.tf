@@ -40,7 +40,7 @@ resource "azurerm_virtual_machine" "virtual_machine" {
       type     = "ssh"
       user     = "adminuser"
       password = "Password1234!"
-      host     = azurerm_network_interface.network_interface[count.index].private_ip_address
+      host     = var.public_ip.ip_address
     }
 
     inline = count.index == 1 ? [
