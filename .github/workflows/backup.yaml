@@ -7,6 +7,14 @@ jobs:
   callBackup:
     runs-on: self-hosted
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: entrar a los archivos de ansible
+        run: cd ansible
+
+      - name: ls
+        run: ls
+
       - name: llamar al archivo de backup
         
         run: |
