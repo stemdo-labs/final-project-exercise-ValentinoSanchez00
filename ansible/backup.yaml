@@ -1,6 +1,8 @@
 - name: Backup
   hosts: bd
   become: true
+  vars_files:
+    - vars.yml
   tasks:
 
     - name: Crear directorio para backups
