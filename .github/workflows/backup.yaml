@@ -18,7 +18,5 @@ jobs:
       - name: llamar al archivo de backup
         
         run: |
-          cd ansible
-          ls -l
           ansible-playbook backup.yaml -i inventory.ini
     
