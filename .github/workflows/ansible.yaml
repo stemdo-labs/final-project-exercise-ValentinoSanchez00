@@ -32,6 +32,8 @@ jobs:
       - name: Verify Ansible Installation
         run: ansible --version
       
+      - name: install ansible galaxi role
+        run: ansible-galaxy role install geerlingguy.postgresql
   ejecutaransible:
     needs: install-ansible
     uses: ./.github/workflows/postgre.yml
