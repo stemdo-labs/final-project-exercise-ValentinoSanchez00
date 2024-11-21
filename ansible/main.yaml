@@ -2,9 +2,9 @@
   hosts: all
   become: yes
   vars:
-    postgres_user: "userpostgres"  # Nombre del usuario que quieres crear
+    postgres_user: "userparaback"  # Nombre del usuario que quieres crear
     postgres_password: "admin123" # Contraseña para el usuario
-    db_name: "dbprueba"           # Nombre de la base de datos
+    db_name: "dbback"           # Nombre de la base de datos
   tasks:
     - name: Actualizar el índice de paquetes
       apt:
@@ -28,7 +28,6 @@
       postgresql_user:
         name: "{{ postgres_user }}"
         password: "{{ postgres_password }}"
-        priv: "ALL" # Asigna todos los privilegios al usuario
         state: present
       become_user: postgres
 
@@ -38,9 +37,11 @@
         owner: "postgres" 
         state: present
       become_user: postgres
-    - name: Asignar a la bd el usuario
+
+    - name: Asignar privilegios al usuario para la base de datos
       postgresql_privs:
         db: "{{ db_name }}"
         privs: "ALL"
         type: database
         roles: "{{ postgres_user }}"
+      become_user: postgres
