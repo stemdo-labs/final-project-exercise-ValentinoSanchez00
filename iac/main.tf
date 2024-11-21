@@ -49,6 +49,7 @@ module "virtual-machine" {
   location = var.location
   rg_group = var.rg_group
   network_interface_ids = module.network-interface.network_interface_ids
+  public_ip = module.network-interface.ippublics
   
 }
 
