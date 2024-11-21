@@ -55,6 +55,7 @@
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
     - name: Subir el backup al contenedor de Azure
+      local_action:
       azure.azcollection.azure_rm_storageblob:
         resource_group: "rg-vsanchez-dvfinlab"
         container_name: "backupbd" 
