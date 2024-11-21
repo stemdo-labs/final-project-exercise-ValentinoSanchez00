@@ -35,6 +35,12 @@
     - name: Crear base de datos
       postgresql_db:
         name: "{{ db_name }}"
-        owner: "{{ postgres_user }}" # Asigna la base de datos al usuario creado
+        owner: "postgres" 
         state: present
       become_user: postgres
+    - name: Asignar a la bd el usuario
+      postgresql_privs:
+        db: "{{ db_name }}"
+        privs: "ALL"
+        type: database
+        roles: "{{ postgres_user }}"
