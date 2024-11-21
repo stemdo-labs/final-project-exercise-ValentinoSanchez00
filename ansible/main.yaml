@@ -1,4 +1,4 @@
-- hosts: database_server
+- hosts: all
   become: yes
   vars:
     postgresql_version: "14" 
@@ -8,7 +8,7 @@
         - name: orquestas  
           state: present  
       postgresql_users:
-        - name: vsanchez 
-          password: Password1234!  
+        - name: myuser 
+          password: mypassword  
           encrypted: yes  
           state: present  
