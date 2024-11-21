@@ -1,0 +1,14 @@
+name: backup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  callBackup:
+    runs-on: self-hosted
+    steps:
+      - name: llamar al archivo de backup
+        working-directory: ansible
+        run: |
+          ansible-playbook backup.yaml -i inventory.ini
+    
