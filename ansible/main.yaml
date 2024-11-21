@@ -18,24 +18,20 @@
           - python3-psycopg2
         state: present
 
-    - name: Asegurarse de que el servicio PostgreSQL está iniciado
-      service:
-        name: postgresql
-        state: started
-        enabled: yes
     - name: Crear base de datos
       postgresql_db:
         name: "{{ db_name }}"
         owner: "postgres" 
         state: present
       become_user: postgres
+      become: yes
 
     - name: Crear usuario de PostgreSQL
       postgresql_user:
         name: "{{ postgres_user }}"
-        password: "{{ postgres_password }}"
         state: present
       become_user: postgres
+      become: yes
 
     - name: Asignar privilegios al usuario para la base de datos
       postgresql_privs:
