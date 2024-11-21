@@ -25,3 +25,22 @@
       debug:
         msg: "Backup creado correctamente en {{ backup_file }}"
       when: backup_result.rc == 0
+
+    - name: Crear el directorio local de backups si no existe
+      local_action:
+        module: file
+        path: "{{ local_backup_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Traer el backup al controlador local
+      fetch:
+        src: "{{ backup_file }}"
+        dest: "{{ local_backup_dir }}/"
+        flat: yes
+
+    - name: Confirmar la transferencia del archivo al controlador local
+      debug:
+        msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
+
+    
