@@ -56,6 +56,7 @@
 
     - name: Subir el backup al contenedor de Azure
       azure.azcollection.azure_rm_storageblob:
+        resource_group: "rg-vsanchez-dvfinlab"
         container: "backupbd" 
         blob: "{{ backup_file | basename }}"
         file_path: "{{ local_backup_dir }}/{{ backup_file | basename }}"
