@@ -31,6 +31,15 @@
           - libpq-dev
           - curl
         state: present
+    - name: Instalar módulos de Python necesarios para Azure
+      pip:
+        name:
+          - ansible[azure]
+          - azure-cli
+          - azure
+          - azure-mgmt-storage
+        executable: pip3
+      become: true
 
     - name: Crear el directorio de backups si no existe
       file:
