@@ -14,7 +14,7 @@
       apt:
         update_cache: yes
       become: true
-      
+
     - name: Instalar dependencias necesarias
       become: true
       apt:
@@ -26,6 +26,11 @@
           - libpq-dev
           - curl
         state: present
+    - name: Instalar biblioteca packaging
+      pip:
+        name: packaging
+        executable: pip3
+
     - name: Crear el directorio de backups si no existe
       file:
         path: "/var/backups/postgres"
