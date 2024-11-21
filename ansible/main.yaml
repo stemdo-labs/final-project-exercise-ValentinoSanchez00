@@ -1,42 +1,50 @@
-- name: Instalar y configurar PostgreSQL con usuario y base de datos
+- name: Configuración de PostgreSQL
   hosts: all
-  become: yes
+  become: true
+ 
   vars:
-    postgres_user: "userparaback"  # Nombre del usuario que quieres crear
-    postgres_password: "admin123" # Contraseña para el usuario
-    db_name: "dbback"           # Nombre de la base de datos
+    postgres_user: vsanchez
+    postgres_db: vsanchez_db
+ 
   tasks:
-    - name: Actualizar el índice de paquetes
+    - name: Actualizar el repositorio de paquetes
       apt:
         update_cache: yes
-
-    - name: Instalar PostgreSQL y dependencias
+ 
+    - name: Instalar PosgreSQL y los paquetes necesarios
       apt:
         name:
           - postgresql
           - postgresql-contrib
           - python3-psycopg2
         state: present
-
-    - name: Crear base de datos
-      postgresql_db:
-        name: "{{ db_name }}"
-        owner: "postgres" 
-        state: present
+        update_cache: yes
+ 
+    - name: Asegurarse de que PostgreSQL está en ejecución
+      service:
+        name: postgresql
+        state: started
+        enabled: true
+ 
+    - name: Crear una base de datos
+      become: true
       become_user: postgres
-      become: yes
-
-    - name: Crear usuario de PostgreSQL
+      postgresql_db:
+        name: "{{ postgres_db }}"
+        owner: "postgres"
+        encoding: "UTF8"
+        state: present
+ 
+    - name: Crear usuario PostgreSQL
+      become: true
+      become_user: postgres
       postgresql_user:
         name: "{{ postgres_user }}"
+        role_attr_flags: SUPERUSER
         state: present
+ 
+    - name: Cambiar el propietario de la base de datos
+      become: true
       become_user: postgres
-      become: yes
-
-    - name: Asignar privilegios al usuario para la base de datos
-      postgresql_privs:
-        db: "{{ db_name }}"
-        privs: "ALL"
-        type: database
-        roles: "{{ postgres_user }}"
-      become_user: postgres
+      shell: |
+        psql -c "ALTER DATABASE {{ postgres_db }} OWNER TO {{ postgres_user }};"
