@@ -36,8 +36,4 @@
         owner: "{{ postgres_user }}" # Asigna la base de datos al usuario creado
         state: present
 
-    - name: Verificar conexión con el nuevo usuario
-      shell: |
-        PGPASSWORD={{ postgres_password }} psql -h localhost -U {{ postgres_user }} -d {{ db_name }} -c '\l'
-      register: query_result
-      changed_when: false
+
