@@ -6,3 +6,6 @@ jobs:
   createInfraestructure:
    uses: ./.github/workflows/infraestructure.yaml
    secrets: inherit
+  useAnsible:
+   uses: ./.github/workflows/ansible.yaml
+   secrets: inherit
