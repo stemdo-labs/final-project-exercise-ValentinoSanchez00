@@ -18,7 +18,7 @@
       shell: |
         pg_dump -U {{ postgres_user }} {{ postgres_db }} | gzip | openssl enc -aes-256-cbc -salt -out {{ backup_file }} -k "{{ encryption_key }}"
       environment:
-        PGPASSWORD: "tu_password_postgres"
+        PGPASSWORD: "mypassword"
       register: backup_result
 
     - name: Verificar si el dump y cifrado fue exitoso
