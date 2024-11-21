@@ -10,6 +10,11 @@
     ansible_user: "adminuser"
 
   tasks:
+    - name: Actualizar la caché de paquetes
+      apt:
+        update_cache: yes
+      become: true
+      
     - name: Instalar dependencias necesarias
       become: true
       apt:
