@@ -10,6 +10,7 @@
     ansible_user: "vsanchez"
     azure_container_name: "bdbackups"
     azure_account_name: "stavsanchezdvfinlab"
+    azure_container_url: "https://stavsanchezdvfinlab.blob.core.windows.net/bdbackups"
   environment:
     ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
     ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
@@ -17,10 +18,21 @@
     ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
 
   tasks:
-    
+
     - name: Actualizar la caché de paquetes
       apt:
         update_cache: yes
+      become: true
+
+    - name: Instalar azcopy si no está disponible
+      shell: |
+        if ! command -v azcopy &> /dev/null; then
+          wget -O /tmp/azcopy.tar.gz https://aka.ms/downloadazcopy-linux && \
+          tar -xf /tmp/azcopy.tar.gz --strip-components=1 -C /usr/local/bin/ && \
+          chmod +x /usr/local/bin/azcopy;
+        fi
+      args:
+        warn: false
       become: true
 
     - name: Crear el directorio de backups si no existe
@@ -67,21 +79,19 @@
       debug:
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
-    - name: Subir el archivo de backup al contenedor de Azure
+    - name: Subir el archivo de backup al contenedor de Azure usando azcopy
       shell: |
-        az storage blob upload \
-          --container-name "{{ azure_container_name }}" \
-          --account-name "{{ azure_account_name }}" \
-          --file "{{ local_backup_dir }}/{{ backup_file | basename }}" \
-          --name "backup-{{ ansible_date_time.date }}.sql.gz.enc"
+        azcopy copy "{{ local_backup_dir }}/{{ backup_file | basename }}" \
+        "{{ azure_container_url }}/backup-{{ ansible_date_time.date }}.sql.gz.enc" \
+        --recursive
       environment:
-        AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-        AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
-        AZURE_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
-        AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-      register: upload_output
-      failed_when: "'ERROR' in upload_output.stdout"
+        AZCOPY_SPA_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
+        AZCOPY_SPA_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
+        AZCOPY_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
+        AZCOPY_SPA_AUTH_MODE: "login"
+      register: azcopy_output
+      failed_when: "'Failed' in azcopy_output.stdout or azcopy_output.rc != 0"
 
-    - name: Confirmar la subida a Azure
+    - name: Confirmar la subida a Azure con azcopy
       debug:
-        msg: "Backup subido correctamente al contenedor de Azure."
+        msg: "Backup subido correctamente al contenedor de Azure usando azcopy."
