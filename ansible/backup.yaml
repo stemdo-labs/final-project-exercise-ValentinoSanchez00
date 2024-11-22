@@ -24,16 +24,28 @@
         update_cache: yes
       become: true
 
-    - name: Instalar azcopy si no está disponible
-      shell: |
-        if ! command -v azcopy &> /dev/null; then
-          wget -O  https://aka.ms/downloadazcopy-v10-linux && \
-          tar -xf /tmp/azcopy.tar.gz --strip-components=1 -C /usr/local/bin/ && \
-          chmod +x /usr/local/bin/azcopy;
-        fi
+    - name: Ensure wget and unzip are installed
+      package:
+        name:
+          - wget
+          - unzip
+        state: present
+
+    - name: Download and extract AzCopy
+      unarchive:
+        src: https://aka.ms/downloadazcopy-v10-linux
+        dest: /usr/local/bin/
+        remote_src: yes
+
+    - name: Move AzCopy binary to system path
+      shell: mv /usr/local/bin/azcopy_linux_amd64*/azcopy /usr/local/bin/
       args:
-        executable: /bin/bash
-      become: true
+        creates: /usr/local/bin/azcopy
+
+    - name: Ensure AzCopy is executable
+      file:
+        path: /usr/local/bin/azcopy
+        mode: '0755'
 
     - name: Crear el directorio de backups si no existe
       file:
