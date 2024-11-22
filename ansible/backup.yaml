@@ -11,11 +11,6 @@
     azure_container_name: "bdbackups"
     azure_account_name: "stavsanchezdvfinlab"
     azure_container_url: "https://stavsanchezdvfinlab.blob.core.windows.net/bdbackups"
-  environment:
-    ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-    ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
-    ARM_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
-    ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
 
   tasks:
 
@@ -68,73 +63,6 @@
       debug:
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
-    - name: Ensure wget and unzip are installed
-      package:
-        name:
-          - wget
-          - unzip
-        state: present
-
-    - name: Ensure /tmp/azcopy/ directory exists on local machine
-      local_action:
-        module: file
-        path: /tmp/azcopy/
-        state: directory
-        mode: '0755'
-
-    - name: Download AzCopy on local machine
-      local_action:
-        module: get_url
-        url: https://aka.ms/downloadazcopy-v10-linux
-        dest: /tmp/azcopy.zip
-
-    - name: Extract AzCopy on local machine
-      local_action:
-        module: unarchive
-        src: /tmp/azcopy.zip
-        dest: /tmp/azcopy/
-        remote_src: yes
-
-    - name: Move AzCopy binary to system path on local machine
-      local_action:
-        module: shell
-        cmd: mv /tmp/azcopy/azcopy_linux_amd64*/azcopy /usr/local/bin/
-      args:
-        creates: /usr/local/bin/azcopy
-
-    - name: Ensure AzCopy is executable on local machine
-      local_action:
-        module: file
-        path: /usr/local/bin/azcopy
-        mode: '0755'
-    
-    - name: instalar azure cli 
-      local_action:
-        module: shell
-        cmd: >
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-      become: true
-
-    - name: echo todos los secretos 
-      debug:
-        msg: "ARM_CLIENT_ID: {{ lookup('env', 'ARM_CLIENT_ID') }} ARM_CLIENT_SECRET: {{ lookup('env', 'ARM_CLIENT_SECRET') }} ARM_SUBSCRIPTION_ID: {{ lookup('env', 'ARM_SUBSCRIPTION_ID') }} ARM_TENANT_ID: {{ lookup('env', 'ARM_TENANT_ID') }}"
-        
-
-      
-
-    - name: Login to azure in local machine
-      local_action:
-        module: shell
-        cmd: >
-          az login --service-principal -u "{{ lookup('env', 'ARM_CLIENT_ID') }}" -p "{{ lookup('env', 'ARM_CLIENT_SECRET') }}" --tenant "{{ lookup('env', 'ARM_TENANT_ID') }}"
-      environment:
-        AZCOPY_SPA_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-        AZCOPY_SPA_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
-        AZCOPY_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-        AZCOPY_SPA_AUTH_MODE: "login"
-      register: az_login_output
-
-      failed_when: "'Failed' in az_login_output.stdout or az_login_output.rc != 0"
     - name: Subir el archivo de backup al contenedor de Azure usando azcopy
       local_action:
         module: shell
@@ -142,11 +70,6 @@
           azcopy copy "{{ local_backup_dir }}/{{ backup_file | basename }}"
           "{{ azure_container_url }}/backup-{{ ansible_date_time.date }}.sql.gz.enc"
           --recursive
-      environment:
-        AZCOPY_SPA_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-        AZCOPY_SPA_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
-        AZCOPY_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-        AZCOPY_SPA_AUTH_MODE: "login"
       register: azcopy_output
       failed_when: "'Failed' in azcopy_output.stdout or azcopy_output.rc != 0"
 
