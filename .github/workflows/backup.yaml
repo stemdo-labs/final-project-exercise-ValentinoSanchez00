@@ -15,6 +15,16 @@ jobs:
 
       - name: ls
         run: ls
+      
+      - name: echo de todos los secretos
+        run: |
+          echo "ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}"
+          echo "ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}"
+          echo "ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}"
+          echo "ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}"
+          echo "POSTGRE_USER: ${{ secrets.POSTGRE_USER }}"
+          echo "POSTGRE_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}"
+          echo "DB_NAME: ${{ secrets.DB_NAME }}"
     
       - name: llamar al archivo de backup
         working-directory: ansible    
