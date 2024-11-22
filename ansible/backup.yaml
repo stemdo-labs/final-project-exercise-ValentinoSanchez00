@@ -9,10 +9,10 @@
     local_backup_dir: "/backups"
     ansible_user: "adminuser"
   environment:
-        ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-        ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
-        ARM_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
-        ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
+    ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
+    ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
+    ARM_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
+    ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
 
   tasks:
     - name: Actualizar la caché de paquetes
@@ -21,7 +21,6 @@
       become: true
 
     - name: Instalar dependencias necesarias
-      become: true
       apt:
         name:
           - python3
@@ -29,8 +28,21 @@
           - python3-dev
           - python3-venv
           - libpq-dev
+          - build-essential
+          - python3-wheel
           - curl
         state: present
+      become: true
+
+    - name: Actualizar pip y setuptools
+      pip:
+        name:
+          - pip
+          - setuptools
+        state: latest
+        executable: pip3
+      become: true
+
     - name: Instalar módulos de Python necesarios para Azure
       pip:
         name:
@@ -73,7 +85,7 @@
         group: "{{ ansible_user }}"
         mode: '0777'
       become: true
-    
+
     - name: Traer el backup al controlador local
       fetch:
         src: "{{ backup_file }}"
