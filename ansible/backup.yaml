@@ -34,25 +34,6 @@
         state: present
       become: true
 
-    - name: Actualizar pip y setuptools
-      pip:
-        name:
-          - pip
-          - setuptools
-        state: latest
-        executable: pip3
-      become: true
-
-    - name: Instalar módulos de Python necesarios para Azure
-      pip:
-        name:
-          - ansible[azure]
-          - azure-cli
-          - azure
-          - azure-mgmt-storage
-        executable: pip3
-      become: true
-
     - name: Crear el directorio de backups si no existe
       file:
         path: "/var/backups/postgres"
@@ -97,12 +78,6 @@
       debug:
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
-    - name: Instalar el módulo de Azure para Python
-      pip:
-        name:
-          - azure-storage-blob
-        executable: pip3
-
     - name: Subir el archivo de backup al contenedor de Azure
       shell: |
         az storage blob upload \
@@ -115,7 +90,8 @@
         AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
         AZURE_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
         AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-      delegate_to: localhost
+      register: upload_output
+      failed_when: "'ERROR' in upload_output.stdout"
 
     - name: Confirmar la subida a Azure
       debug:
