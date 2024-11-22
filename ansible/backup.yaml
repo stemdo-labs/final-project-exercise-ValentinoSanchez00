@@ -107,6 +107,13 @@
         module: file
         path: /usr/local/bin/azcopy
         mode: '0755'
+    
+    - name: instalar azure cli 
+      local_action:
+        module: shell
+        cmd: >
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      become: true
 
     - name: Login to azure in local machine
       local_action:
@@ -119,7 +126,7 @@
         AZCOPY_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
         AZCOPY_SPA_AUTH_MODE: "login"
       register: az_login_output
-      
+
       failed_when: "'Failed' in az_login_output.stdout or az_login_output.rc != 0"
     - name: Subir el archivo de backup al contenedor de Azure usando azcopy
       local_action:
