@@ -19,11 +19,12 @@ jobs:
       - name: instalar az cli
         run: sudo apt-get install -y azure-cli
       
-      - name: Login a Azure con mis secretos
-        run: az login \
-            --username $AZURE_CLIENT_ID \
-          --password $AZURE_SECRET \
-          --tenant $AZURE_TENANT
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
     
       - name: llamar al archivo de backup
         working-directory: ansible    
