@@ -41,6 +41,10 @@ jobs:
       - name: Install Ansible Galaxy Role
         run: ansible-galaxy role install geerlingguy.postgresql
 
+      # Paso 8: Instalar colección de Ansible para Azure
+      - name: Install Azure Collection
+        run: ansible-galaxy collection install azure.azcollection
+
   ejecutaransible:
     needs: install-ansible
     uses: ./.github/workflows/postgre.yml
