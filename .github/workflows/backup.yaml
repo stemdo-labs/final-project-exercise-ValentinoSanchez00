@@ -20,8 +20,13 @@ jobs:
         run: sudo apt-get install -y azure-cli
       
       
+    
+      - name: llamar al archivo de backup
+        working-directory: ansible    
+        run: |
+          ansible-playbook backup.yaml -i inventory.ini
 
-      # Paso 3: Login en Azure
+       # Paso 3: Login en Azure
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -37,11 +42,6 @@ jobs:
 
       - name: Az copy login
         run: az login --service-principal -u ${{ secrets.ARM_CLIENT_ID }} --password ${{ secrets.ARM_CLIENT_SECRET }} --tenant ${{ secrets.ARM_TENANT_ID }}
-    
-      - name: llamar al archivo de backup
-        working-directory: ansible    
-        run: |
-          ansible-playbook backup.yaml -i inventory.ini
 
       - name: Subir archivo a Azure
         run: |
