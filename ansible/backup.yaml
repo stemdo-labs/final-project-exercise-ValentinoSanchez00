@@ -24,29 +24,6 @@
         update_cache: yes
       become: true
 
-    - name: Ensure wget and unzip are installed
-      package:
-        name:
-          - wget
-          - unzip
-        state: present
-
-    - name: Download and extract AzCopy
-      unarchive:
-        src: https://aka.ms/downloadazcopy-v10-linux
-        dest: /usr/local/bin/
-        remote_src: yes
-
-    - name: Move AzCopy binary to system path
-      shell: mv /usr/local/bin/azcopy_linux_amd64*/azcopy /usr/local/bin/
-      args:
-        creates: /usr/local/bin/azcopy
-
-    - name: Ensure AzCopy is executable
-      file:
-        path: /usr/local/bin/azcopy
-        mode: '0755'
-
     - name: Crear el directorio de backups si no existe
       file:
         path: "/var/backups/postgres"
@@ -90,6 +67,40 @@
     - name: Confirmar la transferencia del archivo al controlador local
       debug:
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
+
+    - name: Ensure wget and unzip are installed
+      package:
+        name:
+          - wget
+          - unzip
+        state: present
+
+    - name: Download AzCopy on local machine
+      local_action:
+        module: get_url
+        url: https://aka.ms/downloadazcopy-v10-linux
+        dest: /tmp/azcopy.zip
+
+    - name: Extract AzCopy on local machine
+      local_action:
+        module: unarchive
+        src: /tmp/azcopy.zip
+        dest: /tmp/azcopy/
+        remote_src: yes
+
+    - name: Move AzCopy binary to system path on local machine
+      local_action:
+        module: shell
+        cmd: mv /tmp/azcopy/azcopy_linux_amd64*/azcopy /usr/local/bin/
+      args:
+        creates: /usr/local/bin/azcopy
+
+    - name: Ensure AzCopy is executable on local machine
+      local_action:
+        module: file
+        path: /usr/local/bin/azcopy
+        mode: '0755'
+
 
     - name: Subir el archivo de backup al contenedor de Azure usando azcopy
       local_action:
