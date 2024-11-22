@@ -24,3 +24,6 @@ jobs:
           AZURE_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           AZURE_TENANT: ${{ secrets.ARM_TENANT_ID }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
