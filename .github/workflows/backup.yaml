@@ -14,11 +14,7 @@ jobs:
 
       - name: ls
         run: ls
-      
-      - name: Debug environment variables
-        run: env | grep ARM
-
-
+    
       - name: llamar al archivo de backup
         working-directory: ansible    
         run: |
