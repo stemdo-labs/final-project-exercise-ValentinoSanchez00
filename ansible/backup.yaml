@@ -75,6 +75,13 @@
           - unzip
         state: present
 
+    - name: Ensure /tmp/azcopy/ directory exists on local machine
+      local_action:
+        module: file
+        path: /tmp/azcopy/
+        state: directory
+        mode: '0755'
+
     - name: Download AzCopy on local machine
       local_action:
         module: get_url
