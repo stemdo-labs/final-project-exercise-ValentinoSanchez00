@@ -115,6 +115,13 @@
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
       become: true
 
+    - name: echo todos los secretos 
+      debug:
+        msg: "ARM_CLIENT_ID: {{ lookup('env', 'ARM_CLIENT_ID') }} ARM_CLIENT_SECRET: {{ lookup('env', 'ARM_CLIENT_SECRET') }} ARM_SUBSCRIPTION_ID: {{ lookup('env', 'ARM_SUBSCRIPTION_ID') }} ARM_TENANT_ID: {{ lookup('env', 'ARM_TENANT_ID') }}"
+        
+
+      
+
     - name: Login to azure in local machine
       local_action:
         module: shell
