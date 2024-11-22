@@ -22,7 +22,7 @@
   tasks:
     - name: Obtener una lista de bases de datos existentes
       community.postgresql.postgresql_info:
-        login_host: "localhost"
+        login_host: "10.0.0.4"
         login_user: "{{ lookup('env', 'DB_USER') }}"
         login_password: "{{ lookup('env', 'DB_PASSWORD') }}"
       register: db_info
