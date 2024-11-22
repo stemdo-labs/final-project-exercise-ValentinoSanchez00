@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      
       - name: entrar a los archivos de ansible
         run: cd ansible
 
@@ -18,13 +19,11 @@ jobs:
       - name: llamar al archivo de backup
         working-directory: ansible    
         run: |
-          export AZURE_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          export AZURE_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-          export AZURE_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          export AZURE_TENANT: ${{ secrets.ARM_TENANT_ID }}
-          export POSTGRE_USER: ${{ secrets.POSTGRE_USER }}
-          export POSTGRE_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
-          export DB_NAME: ${{ secrets.DB_NAME }}
+          export AZURE_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}
+          export AZURE_SECRET=${{ secrets.ARM_CLIENT_SECRET }}
+          export AZURE_SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}
+          export AZURE_TENANT=${{ secrets.ARM_TENANT_ID }}
+          export POSTGRE_USER=${{ secrets.POSTGRE_USER }}
+          export POSTGRE_PASSWORD=${{ secrets.POSTGRE_PASSWORD }}
+          export DB_NAME=${{ secrets.DB_NAME }}
           ansible-playbook backup.yaml -i inventory.ini
-        
-          
