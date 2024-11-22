@@ -46,7 +46,7 @@
         AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
       register: download_output
       failed_when: "'ERROR' in download_output.stdout"
-      when: "'{{ lookup('env', 'DB_NAME') }}' not in db_info.stdout_lines"
+      when: lookup('env', 'DB_NAME') not in db_info.stdout_lines
 
     - name: Restaurar la base de datos desde el backup descargado
       shell: |
