@@ -20,7 +20,26 @@
     DB_NAME: "{{ lookup('env', 'DB_NAME') }}"
 
   tasks:
-    - name: Asegurarse de que Azure CLI esté instalado
+    - name: Actualizar la caché de paquetes
+      apt:
+        update_cache: yes
+      become: true
+
+    - name: Agregar el repositorio de Microsoft si no está configurado
+      shell: |
+        curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+        echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list
+      args:
+        creates: /etc/apt/sources.list.d/azure-cli.list
+      become: true
+
+    - name: Actualizar la caché de paquetes después de agregar el repositorio
+      apt:
+        update_cache: yes
+      when: not ansible_facts.packages['azure-cli'] is defined
+      become: true
+
+    - name: Instalar Azure CLI
       apt:
         name: azure-cli
         state: present
@@ -31,11 +50,6 @@
       register: az_version
       failed_when: az_version.rc != 0
       changed_when: false
-
-    - name: Actualizar la caché de paquetes
-      apt:
-        update_cache: yes
-      become: true
 
     - name: Obtener una lista de bases de datos existentes
       shell: |
