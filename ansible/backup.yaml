@@ -22,7 +22,7 @@
   tasks:
     - name: Obtener una lista de bases de datos existentes
       community.postgresql.postgresql_info:
-        login_host: "localhost"
+        login_host: "{{ ansible_host }}"
         login_user: "{{ lookup('env', 'POSTGRE_USER') }}"
         login_password: "{{ lookup('env', 'POSTGRE_PASSWORD') }}"
       register: db_info
