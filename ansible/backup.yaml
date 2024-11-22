@@ -108,7 +108,19 @@
         path: /usr/local/bin/azcopy
         mode: '0755'
 
-
+    - name: Login to azure in local machine
+      local_action:
+        module: shell
+        cmd: >
+          az login --service-principal -u "{{ lookup('env', 'ARM_CLIENT_ID') }}" -p "{{ lookup('env', 'ARM_CLIENT_SECRET') }}" --tenant "{{ lookup('env', 'ARM_TENANT_ID') }}"
+      environment:
+        AZCOPY_SPA_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
+        AZCOPY_SPA_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
+        AZCOPY_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
+        AZCOPY_SPA_AUTH_MODE: "login"
+      register: az_login_output
+      
+      failed_when: "'Failed' in az_login_output.stdout or az_login_output.rc != 0"
     - name: Subir el archivo de backup al contenedor de Azure usando azcopy
       local_action:
         module: shell
