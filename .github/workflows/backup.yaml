@@ -19,4 +19,8 @@ jobs:
         working-directory: ansible    
         run: |
           ansible-playbook backup.yaml -i inventory.ini
-    
+        with:
+          AZURE_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          AZURE_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          AZURE_TENANT: ${{ secrets.ARM_TENANT_ID }}
