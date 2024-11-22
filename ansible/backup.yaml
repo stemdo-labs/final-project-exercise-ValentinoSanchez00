@@ -92,10 +92,12 @@
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
     - name: Subir el archivo de backup al contenedor de Azure usando azcopy
-      local_action: shell |
-        azcopy copy "{{ local_backup_dir }}/{{ backup_file | basename }}" \
-        "{{ azure_container_url }}/backup-{{ ansible_date_time.date }}.sql.gz.enc" \
-        --recursive
+      local_action:
+        module: shell
+        cmd: >
+          azcopy copy "{{ local_backup_dir }}/{{ backup_file | basename }}"
+          "{{ azure_container_url }}/backup-{{ ansible_date_time.date }}.sql.gz.enc"
+          --recursive
       environment:
         AZCOPY_SPA_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
         AZCOPY_SPA_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
@@ -103,6 +105,7 @@
         AZCOPY_SPA_AUTH_MODE: "login"
       register: azcopy_output
       failed_when: "'Failed' in azcopy_output.stdout or azcopy_output.rc != 0"
+
 
 
     - name: Confirmar la subida a Azure con azcopy
