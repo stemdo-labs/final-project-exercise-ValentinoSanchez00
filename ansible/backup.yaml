@@ -8,30 +8,44 @@
     encryption_key: "G7x!#aB12$vf@kT"
     local_backup_dir: "/backups"
     ansible_user: "adminuser"
+    azure_container_name: "bdbackups"
+    azure_account_name: "stavsanchezdvfinlab"
   environment:
     ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
     ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
     ARM_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
     ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
+    db_user: "{{ lookup('env', 'DB_USER') }}"
+    db_password: "{{ lookup('env', 'DB_PASSWORD') }}"
+    db_name: "{{ lookup('env', 'DB_NAME') }}"
 
   tasks:
+    - name: Obtener una lista de bases de datos existentes
+      community.postgresql.postgresql_info:
+        login_host: "localhost"
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+      register: db_info
+    
+    - name: Traer backup y usarlo para restaurar la base de datos
+      shell: |
+        az storage blob download \
+          --container-name "{{ azure_container_name }}" \
+          --account-name "{{ azure_account_name }}" \
+          --file "{{ local_backup_dir }}/backup_{{ ansible_date_time.date }}.sql.gz.enc" \
+          --name "backup-{{ ansible_date_time.date }}.sql.gz.enc"
+      environment:
+        AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
+        AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
+        AZURE_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
+        AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
+      register: download_output
+      failed_when: "'ERROR' in download_output.stdout"
+      when: "'{{ db_name }}' not in db_info.databases"
+
     - name: Actualizar la caché de paquetes
       apt:
         update_cache: yes
-      become: true
-
-    - name: Instalar dependencias necesarias
-      apt:
-        name:
-          - python3
-          - python3-pip
-          - python3-dev
-          - python3-venv
-          - libpq-dev
-          - build-essential
-          - python3-wheel
-          - curl
-        state: present
       become: true
 
     - name: Crear el directorio de backups si no existe
@@ -84,7 +98,7 @@
           --container-name "{{ azure_container_name }}" \
           --account-name "{{ azure_account_name }}" \
           --file "{{ local_backup_dir }}/{{ backup_file | basename }}" \
-          --name "backups/{{ backup_file | basename }}"
+          --name "backup-{{ ansible_date_time.date }}.sql.gz.enc"
       environment:
         AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
         AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"

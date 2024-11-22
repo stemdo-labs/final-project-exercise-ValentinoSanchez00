@@ -82,7 +82,7 @@ resource "azurerm_container_registry" "acr" {
 
 
 resource "azurerm_network_security_group" "securitygroup" {
-  name                = "acceptanceTestSecurityGroup1"
+  name                = "securitygroup"
   location            = var.location
   resource_group_name = var.rg_group
 
