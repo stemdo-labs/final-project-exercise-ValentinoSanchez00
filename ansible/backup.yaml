@@ -21,12 +21,17 @@
 
   tasks:
     - name: Obtener una lista de bases de datos existentes
-      community.postgresql.postgresql_info:
-        login_host: "{{ ansible_host }}"
-        login_user: "{{ lookup('env', 'POSTGRE_USER') }}"
-        login_password: "{{ lookup('env', 'POSTGRE_PASSWORD') }}"
+      shell: |
+        PGPASSWORD="{{ lookup('env', 'POSTGRE_PASSWORD') }}" \
+        psql -h localhost -U "{{ lookup('env', 'POSTGRE_USER') }}" -d postgres \
+        -t -c "SELECT datname FROM pg_database WHERE datistemplate = false;"
       register: db_info
-    
+      failed_when: db_info.rc != 0
+
+    - name: Mostrar bases de datos obtenidas
+      debug:
+        msg: "{{ db_info.stdout_lines }}"
+
     - name: Traer backup y usarlo para restaurar la base de datos
       shell: |
         az storage blob download \
@@ -41,12 +46,11 @@
         AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
       register: download_output
       failed_when: "'ERROR' in download_output.stdout"
-      when: "'{{ lookup('env', 'DB_NAME') }}' not in db_info.databases"
+      when: "'{{ lookup('env', 'DB_NAME') }}' not in db_info.stdout_lines"
 
     - name: Actualizar la caché de paquetes
       apt:
         update_cache: yes
-      become: true
 
     - name: Crear el directorio de backups si no existe
       file:
@@ -79,14 +83,12 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0777'
-      become: true
 
     - name: Traer el backup al controlador local
       fetch:
         src: "{{ backup_file }}"
         dest: "{{ local_backup_dir }}/"
         flat: yes
-      become: true
 
     - name: Confirmar la transferencia del archivo al controlador local
       debug:
