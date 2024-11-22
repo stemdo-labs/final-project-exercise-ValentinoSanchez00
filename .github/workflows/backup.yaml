@@ -19,12 +19,21 @@ jobs:
       - name: instalar az cli
         run: sudo apt-get install -y azure-cli
       
+      
+
+      # Paso 3: Login en Azure
       - name: Azure Login
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          creds: ${{ env.AZURE_CREDENTIALS }}
+        env:
+          AZURE_CREDENTIALS: |
+            {
+              "clientId": "${{ secrets.ARM_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.ARM_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+            }
     
       - name: llamar al archivo de backup
         working-directory: ansible    
