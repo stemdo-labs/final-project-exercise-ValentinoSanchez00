@@ -8,8 +8,18 @@
     encryption_key: "G7x!#aB12$vf@kT"
     local_backup_dir: "/backups"
     ansible_user: "adminuser"
+  environment:
+        ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
+        ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
+        ARM_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
+        ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
 
   tasks:
+    - name: Actualizar la caché de paquetes
+      apt:
+        update_cache: yes
+      become: true
+
     - name: Instalar dependencias necesarias
       become: true
       apt:
@@ -21,6 +31,16 @@
           - libpq-dev
           - curl
         state: present
+    - name: Instalar módulos de Python necesarios para Azure
+      pip:
+        name:
+          - ansible[azure]
+          - azure-cli
+          - azure
+          - azure-mgmt-storage
+        executable: pip3
+      become: true
+
     - name: Crear el directorio de backups si no existe
       file:
         path: "/var/backups/postgres"
@@ -65,22 +85,26 @@
       debug:
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
-    - name: Subir el backup al contenedor de Azure
-      azure.azcollection.azure_rm_storageblob:
-        resource_group: "rg-vsanchez-dvfinlab"
-        container_name: "backupbd" 
-        blob_name: "{{ backup_file | basename }}"
-        src: "{{ local_backup_dir }}/{{ backup_file | basename }}"
-        storage_account_name: "stavsanchezdvfinlab" 
-        auth_source: "msi" 
+    - name: Instalar el módulo de Azure para Python
+      pip:
+        name:
+          - azure-storage-blob
+        executable: pip3
+
+    - name: Subir el archivo de backup al contenedor de Azure
+      shell: |
+        az storage blob upload \
+          --container-name "{{ azure_container_name }}" \
+          --account-name "{{ azure_account_name }}" \
+          --file "{{ local_backup_dir }}/{{ backup_file | basename }}" \
+          --name "backups/{{ backup_file | basename }}"
       environment:
         AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-        AZURE_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
+        AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
         AZURE_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
-        AZURE_TENANT: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-      register: upload_result
+        AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
+      delegate_to: localhost
 
-    - name: Confirmar la carga al contenedor de Azure
+    - name: Confirmar la subida a Azure
       debug:
-        msg: "Archivo subido exitosamente al contenedor de Azure Blob Storage"
-      when: upload_result.changed
+        msg: "Backup subido correctamente al contenedor de Azure."
