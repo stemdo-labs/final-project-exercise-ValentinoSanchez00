@@ -20,6 +20,11 @@
     DB_NAME: "{{ lookup('env', 'DB_NAME') }}"
 
   tasks:
+    - name: Actualizar la caché de paquetes
+      apt:
+        update_cache: yes
+      become: true
+      
     - name: Obtener una lista de bases de datos existentes
       shell: |
         PGPASSWORD="{{ lookup('env', 'POSTGRE_PASSWORD') }}" \
