@@ -7,9 +7,9 @@
     backup_file: "/var/backups/postgres/backup_{{ ansible_date_time.date }}.sql.gz.enc"
     encryption_key: "G7x!#aB12$vf@kT"
     local_backup_dir: "/backups"
-    ansible_user: "vsanchez"
     azure_container_name: "bdbackups"
     azure_account_name: "stavsanchezdvfinlab"
+
   environment:
     ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
     ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
@@ -20,11 +20,23 @@
     DB_NAME: "{{ lookup('env', 'DB_NAME') }}"
 
   tasks:
+    - name: Asegurarse de que Azure CLI esté instalado
+      apt:
+        name: azure-cli
+        state: present
+      become: true
+
+    - name: Validar que el comando 'az' esté disponible
+      shell: az --version
+      register: az_version
+      failed_when: az_version.rc != 0
+      changed_when: false
+
     - name: Actualizar la caché de paquetes
       apt:
         update_cache: yes
       become: true
-      
+
     - name: Obtener una lista de bases de datos existentes
       shell: |
         PGPASSWORD="{{ lookup('env', 'POSTGRE_PASSWORD') }}" \
