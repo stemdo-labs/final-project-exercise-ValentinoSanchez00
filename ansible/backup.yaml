@@ -50,6 +50,15 @@
       register: az_version
       failed_when: az_version.rc != 0
       changed_when: false
+    
+    - name: Realizar login en Azure CLI con credenciales del servicio
+      shell: |
+        az login --service-principal \
+          --username "{{ lookup('env', 'ARM_CLIENT_ID') }}" \
+          --password "{{ lookup('env', 'ARM_CLIENT_SECRET') }}" \
+          --tenant "{{ lookup('env', 'ARM_TENANT_ID') }}"
+      register: azure_login
+      failed_when: azure_login.rc != 0
 
     - name: Obtener una lista de bases de datos existentes
       shell: |
