@@ -42,4 +42,10 @@ jobs:
         working-directory: ansible    
         run: |
           ansible-playbook backup.yaml -i inventory.ini
-         
+
+      - name: Subir archivo a Azure
+        run: |
+          azcopy copy "${{ secrets.LOCAL_BACKUP_DIR }}/backup-${{ env.DATE }}.sql.gz.enc" \
+          "${{ secrets.AZURE_CONTAINER_URL }}/backup-${{ env.DATE }}.sql.gz.enc" --recursive
+        env:
+          DATE: $(date +%Y-%m-%d) 
