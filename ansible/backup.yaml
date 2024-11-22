@@ -72,7 +72,7 @@
           --container-name "{{ azure_container_name }}" \
           --account-name "{{ azure_account_name }}" \
           --file "{{ local_backup_dir }}/{{ backup_file | basename }}" \
-          --name "backups/{{ backup_file | basename }}"
+          --name "backup-{{ ansible_date_time.date }}.sql.gz.enc"
       environment:
         AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
         AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
