@@ -32,7 +32,7 @@
       debug:
         msg: "{{ db_info.stdout_lines }}"
 
-    - name: Traer backup y usarlo para restaurar la base de datos
+    - name: Descargar backup desde Azure si la base de datos no existe
       shell: |
         az storage blob download \
           --container-name "{{ azure_container_name }}" \
@@ -48,9 +48,12 @@
       failed_when: "'ERROR' in download_output.stdout"
       when: "'{{ lookup('env', 'DB_NAME') }}' not in db_info.stdout_lines"
 
-    - name: Actualizar la caché de paquetes
-      apt:
-        update_cache: yes
+    - name: Restaurar la base de datos desde el backup descargado
+      shell: |
+        gzip -d < {{ local_backup_dir }}/backup_{{ ansible_date_time.date }}.sql.gz.enc | \
+        openssl enc -d -aes-256-cbc -salt -k "{{ encryption_key }}" | \
+        PGPASSWORD="{{ lookup('env', 'POSTGRE_PASSWORD') }}" psql -U {{ postgres_user }} -d {{ postgres_db }}
+      when: download_output.rc == 0
 
     - name: Crear el directorio de backups si no existe
       file:
@@ -58,57 +61,40 @@
         state: directory
         mode: '0755'
 
-    - name: Dump y cifrar la base de datos PostgreSQL
+    - name: Crear nuevo backup y cifrarlo si no hubo restauración
       shell: |
         pg_dump -U {{ postgres_user }} {{ postgres_db }} | gzip | openssl enc -aes-256-cbc -salt -out {{ backup_file }} -k "{{ encryption_key }}"
       environment:
-        PGPASSWORD: "mypassword"
+        PGPASSWORD: "{{ lookup('env', 'POSTGRE_PASSWORD') }}"
       register: backup_result
+      when: download_output is not defined or download_output.rc != 0
 
     - name: Verificar si el dump y cifrado fue exitoso
       debug:
         msg: "Backup creado correctamente en {{ backup_file }}"
-      when: backup_result.rc == 0
+      when: backup_result is defined and backup_result.rc == 0
 
-    - name: Crear el directorio local de backups si no existe
-      local_action:
-        module: file
-        path: "{{ local_backup_dir }}"
-        state: directory
-        mode: '0777'
-
-    - name: Ajustar permisos del archivo de backup
-      file:
-        path: "{{ backup_file }}"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: '0777'
-
-    - name: Traer el backup al controlador local
-      fetch:
-        src: "{{ backup_file }}"
-        dest: "{{ local_backup_dir }}/"
-        flat: yes
-
-    - name: Confirmar la transferencia del archivo al controlador local
-      debug:
-        msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
-
-    - name: Subir el archivo de backup al contenedor de Azure
+    - name: Subir el nuevo backup a Azure si se creó
       shell: |
         az storage blob upload \
           --container-name "{{ azure_container_name }}" \
           --account-name "{{ azure_account_name }}" \
-          --file "{{ local_backup_dir }}/{{ backup_file | basename }}" \
+          --file "{{ backup_file }}" \
           --name "backup-{{ ansible_date_time.date }}.sql.gz.enc"
       environment:
         AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
         AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
         AZURE_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
         AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-      register: upload_output
-      failed_when: "'ERROR' in upload_output.stdout"
+      when: backup_result is defined and backup_result.rc == 0
 
-    - name: Confirmar la subida a Azure
+    - name: Confirmar que el proceso se completó correctamente
       debug:
-        msg: "Backup subido correctamente al contenedor de Azure."
+        msg: >-
+          {% if download_output is defined and download_output.rc == 0 %}
+            Restauración completada desde el backup descargado.
+          {% elif backup_result is defined and backup_result.rc == 0 %}
+            Nuevo backup creado y subido a Azure correctamente.
+          {% else %}
+            No se realizaron cambios en la base de datos.
+          {% endif %}
