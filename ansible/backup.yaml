@@ -27,7 +27,7 @@
     - name: Instalar azcopy si no está disponible
       shell: |
         if ! command -v azcopy &> /dev/null; then
-          wget -O /tmp/azcopy.tar.gz https://aka.ms/downloadazcopy-linux && \
+          wget -O  https://aka.ms/downloadazcopy-v10-linux && \
           tar -xf /tmp/azcopy.tar.gz --strip-components=1 -C /usr/local/bin/ && \
           chmod +x /usr/local/bin/azcopy;
         fi
