@@ -15,16 +15,16 @@
     ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
     ARM_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
     ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-    db_user: "{{ lookup('env', 'DB_USER') }}"
-    db_password: "{{ lookup('env', 'DB_PASSWORD') }}"
-    db_name: "{{ lookup('env', 'DB_NAME') }}"
+    POSTGRE_USER: "{{ lookup('env', 'POSTGRE_USER') }}"
+    POSTGRE_PASSWORD: "{{ lookup('env', 'POSTGRE_PASSWORD') }}"
+    DB_NAME: "{{ lookup('env', 'DB_NAME') }}"
 
   tasks:
     - name: Obtener una lista de bases de datos existentes
       community.postgresql.postgresql_info:
         login_host: "localhost"
-        login_user: "{{ db_user }}"
-        login_password: "{{ db_password }}"
+        login_user: "{{ lookup('env', 'POSTGRE_USER') }}"
+        login_password: "{{ lookup('env', 'POSTGRE_PASSWORD') }}"
       register: db_info
     
     - name: Traer backup y usarlo para restaurar la base de datos
@@ -41,7 +41,7 @@
         AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
       register: download_output
       failed_when: "'ERROR' in download_output.stdout"
-      when: "'{{ db_name }}' not in db_info.databases"
+      when: "'{{ lookup('env', 'DB_NAME') }}' not in db_info.databases"
 
     - name: Actualizar la caché de paquetes
       apt:
