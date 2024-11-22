@@ -32,7 +32,7 @@
           chmod +x /usr/local/bin/azcopy;
         fi
       args:
-        warn: false
+        executable: /bin/bash
       become: true
 
     - name: Crear el directorio de backups si no existe
