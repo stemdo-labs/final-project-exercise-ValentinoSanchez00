@@ -58,7 +58,7 @@ jobs:
 
       - name: Subir archivo a Azure
         run: |
-          azcopy copy "${{ secrets.LOCAL_BACKUP_DIR }}/backup_${{ env.DATE }}.sql.gz.enc" "https://stavsanchezdvfinlab.blob.core.windows.net/backups/backup-${{ env.DATE }}.sql.gz.enc" --recursive
+          azcopy copy "/backup/backup_2024-11-23.sql.gz.enc" "https://stavsanchezdvfinlab.blob.core.windows.net/backups/backup_2024-11-23.sql.gz.enc" --recursive
         env:
           DATE: $(date +%Y-%m-%d)
 
