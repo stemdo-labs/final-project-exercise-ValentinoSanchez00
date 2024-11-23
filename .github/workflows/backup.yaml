@@ -15,18 +15,15 @@ jobs:
 
       - name: ls
         run: ls
-      
-      - name: instalar az cli
-        run: sudo apt-get install -y azure-cli
-      
-      
-    
+
       - name: llamar al archivo de backup
         working-directory: ansible    
         run: |
           ansible-playbook backup.yaml -i inventory.ini
 
-       # Paso 3: Login en Azure
+      - name: instalar az cli
+        run: sudo apt-get install -y azure-cli
+
       - name: Azure Login
         uses: azure/login@v1
         with:
