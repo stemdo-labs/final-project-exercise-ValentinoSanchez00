@@ -7,6 +7,8 @@
     db_name: orquestas
   tasks:
     - name: Comprobar si la base de datos existe
+      become: yes
+      become_user: postgres
       shell: |
         PGPASSWORD={{ db_password }} psql -U {{ db_user }} -h {{ db_host }} -d {{ db_name }} -c '\q'
       register: db_check
