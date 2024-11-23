@@ -54,9 +54,11 @@ jobs:
       - name: Verificar si la base de datos existe
         id: check_db
         run: |
-             ansible-playbook check_db.yml -e "postgres_password=${{ secrets.POSTGRE_PASSWORD }} postgres_user=${{ secrets.POSTGRE_USER }} database_name=orquestas"
+             ansible-playbook verificacion.yml -e "postgres_password=${{ secrets.POSTGRE_PASSWORD }} postgres_user=${{ secrets.POSTGRE_USER }} database_name=orquestas"
 
-
+      - name: Cargar variables del archivo generado por Ansible
+        run: |
+          cat db_status.env >> $GITHUB_ENV 
 
       # Bloque de recuperación
       - name: Recuperar la base de datos si no existe
