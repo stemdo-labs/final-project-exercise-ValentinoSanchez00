@@ -103,3 +103,9 @@ resource "azurerm_subnet_network_security_group_association" "assosiaton" {
   subnet_id                 = module.subnet.subnet_ids[0]
   network_security_group_id = azurerm_network_security_group.securitygroup.id
 }
+
+resource "azurerm_storage_container" "example" {
+  name                  = "backups"
+  storage_account_name  = "stavsanchezdvfinlab"
+  
+}
