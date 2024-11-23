@@ -20,7 +20,17 @@ jobs:
         working-directory: ansible    
         run: |
           ansible-playbook backup.yaml -i inventory.ini
+      - name: Set up Microsoft repository
+        run: |
+          curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
+          sudo mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
+          AZ_REPO=$(lsb_release -cs)
+          echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
 
+      - name: Update package list and install Azure CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y azure-cli
       - name: instalar az cli
         run: sudo apt-get install -y azure-cli
 
