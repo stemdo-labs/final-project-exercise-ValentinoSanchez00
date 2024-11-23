@@ -56,9 +56,13 @@ jobs:
       - name: Az copy login
         run: az login --service-principal -u ${{ secrets.ARM_CLIENT_ID }} --password ${{ secrets.ARM_CLIENT_SECRET }} --tenant ${{ secrets.ARM_TENANT_ID }}
 
-      - name: Subir archivo a Azure
-        run: |
-          azcopy copy "/backup/backup_2024-11-23.sql.gz.enc" "https://stavsanchezdvfinlab.blob.core.windows.net/backups/backup_2024-11-23.sql.gz.enc" --recursive
-        env:
-          DATE: $(date +%Y-%m-%d)
+     # - name: Subir archivo a Azure
+     #  run: |
+     #     azcopy copy "/backup/backup_2024-11-23.sql.gz.enc" "https://stavsanchezdvfinlab.blob.core.windows.net/backups/backup_2024-11-23.sql.gz.enc" --recursive
+     
 
+      - name: az blob update
+        run: |
+          az storage blob upload --account-name stavsanchezdvfinlab --container-name backups --file /backup/backup_2024-11-23.sql.gz.enc --name backup_2024-11-23.sql.gz.enc
+        env:
+         DATE: $(date +%Y-%m-%d)
