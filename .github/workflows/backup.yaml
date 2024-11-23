@@ -31,9 +31,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y azure-cli
+        
+      - name: Az copy version
+        run: azcopy --version
 
-      - name: instalar az cli
-        run: sudo apt-get install -y azure-cli
 
       - name: Azure Login
         uses: azure/login@v1
