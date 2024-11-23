@@ -1,0 +1,17 @@
+- name: Verificar si la base de datos existe
+  hosts: bd
+  tasks:
+    - name: Comprobar si la base de datos existe
+      shell: |
+        PGPASSWORD={{ postgres_password }} psql -U {{ postgres_user }} -d {{ database_name }} -c '\q'
+      register: db_check
+      ignore_errors: yes
+
+    - name: Configurar variable según resultado
+      set_fact:
+        db_exists: "{{ 'true' if db_check.rc == 0 else 'false' }}"
+
+    - name: Escribir la variable en un archivo para GitHub Actions
+      copy:
+        content: "DB_EXISTS={{ db_exists }}\n"
+        dest: db_status.env

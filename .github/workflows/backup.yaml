@@ -54,11 +54,7 @@ jobs:
       - name: Verificar si la base de datos existe
         id: check_db
         run: |
-          if PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h 10.0.0.5 -U ${{ secrets.POSTGRES_USER }} -d orquestas -c '\q'; then
-            echo "DB_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "DB_EXISTS=false" >> $GITHUB_ENV
-          fi
+             ansible-playbook check_db.yml -e "postgres_password=${{ secrets.POSTGRE_PASSWORD }} postgres_user=${{ secrets.POSTGRE_USER }} database_name=orquestas"
 
 
 
