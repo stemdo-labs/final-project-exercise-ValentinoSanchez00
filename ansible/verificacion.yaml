@@ -2,8 +2,10 @@
   hosts: bd
   tasks:
     - name: Comprobar si la base de datos existe
+      # nO ME VA CON SECRETOS LO HE INTENTADO DE TODAS LAS FORMAS
       shell: |
-        PGPASSWORD={{ postgres_password }} psql -U {{ postgres_user }} -d {{ database_name }} -c '\q'
+        
+        PGPASSWORD=mypassword psql -U myuser -d orquestas -c '\q'
       register: db_check
       ignore_errors: yes
 
