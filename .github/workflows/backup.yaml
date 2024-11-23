@@ -32,8 +32,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y azure-cli
         
-      - name: Az copy version
-        run: azcopy --version
+      - name: Instalar az copy
+        run: |
+          wget https://aka.ms/downloadazcopy-v10-linux -O azcopy.tar.gz
+          tar -xvf azcopy.tar.gz
+          sudo mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+          azcopy --version
 
 
       - name: Azure Login
