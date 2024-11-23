@@ -1,18 +1,16 @@
 - name: Verificar si la base de datos existe
   hosts: bd
   vars:
-  db_user: myuser
-  db_password: "{{ vault_db_password }}"
-  db_host: localhost
-  db_name: orquestas
+    db_user: myuser
+    db_password: mypassword
+    db_host: localhost
+    db_name: orquestas
   tasks:
-    # No he conseguido pasarlas como secretos
     - name: Comprobar si la base de datos existe
       shell: |
         PGPASSWORD={{ db_password }} psql -U {{ db_user }} -h {{ db_host }} -d {{ db_name }} -c '\q'
       register: db_check
       ignore_errors: yes
-
 
     - name: Configurar variable según resultado
       set_fact:
