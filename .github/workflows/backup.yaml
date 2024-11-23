@@ -51,20 +51,16 @@ jobs:
      #     azcopy copy "/backup/backup_2024-11-23.sql.gz.enc" "https://stavsanchezdvfinlab.blob.core.windows.net/backups/backup_2024-11-23.sql.gz.enc" --recursive
      
 
-
-      - name: Instalar herramientas de PostgreSQL
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
-
       - name: Verificar si la base de datos existe
         id: check_db
         run: |
-          if PGPASSWORD=${{ secrets.POSTGRE_PASSWORD}} psql -U ${{ secrets.POSTGRE_USER }} -d orquestas -c '\q'; then
+          if PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h 10.0.0.5 -U ${{ secrets.POSTGRES_USER }} -d orquestas -c '\q'; then
             echo "DB_EXISTS=true" >> $GITHUB_ENV
           else
             echo "DB_EXISTS=false" >> $GITHUB_ENV
           fi
+
+
 
       # Bloque de recuperación
       - name: Recuperar la base de datos si no existe
