@@ -23,7 +23,14 @@
       file:
         path: "/var/backups/postgres"
         state: directory
-        mode: '0755'
+        mode: '0777'
+    
+    - name: Cambiar los permisos del directorio de backups
+      file:
+        path: "/var/backups/postgres"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0777'
 
     - name: Dump y cifrar la base de datos PostgreSQL
       shell: |
