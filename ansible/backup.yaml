@@ -10,14 +10,10 @@
     ansible_user: "vsanchez"
     azure_container_name: "bdbackups"
     azure_account_name: "stavsanchezdvfinlab"
-  environment:
-    ARM_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-    ARM_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
-    ARM_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
-    ARM_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
+    azure_container_url: "https://stavsanchezdvfinlab.blob.core.windows.net/bdbackups"
 
   tasks:
-    
+
     - name: Actualizar la caché de paquetes
       apt:
         update_cache: yes
@@ -67,21 +63,3 @@
       debug:
         msg: "Backup transferido correctamente al controlador local en {{ local_backup_dir }}/{{ backup_file | basename }}"
 
-    - name: Subir el archivo de backup al contenedor de Azure
-      shell: |
-        az storage blob upload \
-          --container-name "{{ azure_container_name }}" \
-          --account-name "{{ azure_account_name }}" \
-          --file "{{ local_backup_dir }}/{{ backup_file | basename }}" \
-          --name "backup-{{ ansible_date_time.date }}.sql.gz.enc"
-      environment:
-        AZURE_CLIENT_ID: "{{ lookup('env', 'ARM_CLIENT_ID') }}"
-        AZURE_CLIENT_SECRET: "{{ lookup('env', 'ARM_CLIENT_SECRET') }}"
-        AZURE_SUBSCRIPTION_ID: "{{ lookup('env', 'ARM_SUBSCRIPTION_ID') }}"
-        AZURE_TENANT_ID: "{{ lookup('env', 'ARM_TENANT_ID') }}"
-      register: upload_output
-      failed_when: "'ERROR' in upload_output.stdout"
-
-    - name: Confirmar la subida a Azure
-      debug:
-        msg: "Backup subido correctamente al contenedor de Azure."
