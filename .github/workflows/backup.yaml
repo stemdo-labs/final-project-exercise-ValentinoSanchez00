@@ -10,16 +10,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       
-      - name: entrar a los archivos de ansible
-        run: cd ansible
-
-      - name: ls
-        run: ls
-
-      - name: llamar al archivo de backup
-        working-directory: ansible    
-        run: |
-          ansible-playbook backup.yaml -i inventory.ini
       - name: Set up Microsoft repository
         run: |
           curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
@@ -61,8 +51,44 @@ jobs:
      #     azcopy copy "/backup/backup_2024-11-23.sql.gz.enc" "https://stavsanchezdvfinlab.blob.core.windows.net/backups/backup_2024-11-23.sql.gz.enc" --recursive
      
 
-      - name: az blob update
+
+      - name: Instalar herramientas de PostgreSQL
         run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Verificar si la base de datos existe
+        id: check_db
+        run: |
+          if PGPASSWORD=${{ secrets.POSTGRE_PASSWORD}} psql -U ${{ secrets.POSTGRE_USER }} -d orquestas -c '\q'; then
+            echo "DB_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "DB_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      # Bloque de recuperación
+      - name: Recuperar la base de datos si no existe
+        if: env.DB_EXISTS == 'false'
+        run: |
+          echo "La base de datos 'orquestas' no existe. Recuperando el último backup..."
+          az storage blob list --account-name stavsanchezdvfinlab --container-name backups --query "[].name" -o tsv | sort -r | head -n 1 > last_backup.txt
+          LAST_BACKUP=$(cat last_backup.txt)
+          echo "Último backup encontrado: $LAST_BACKUP"
+          az storage blob download --account-name stavsanchezdvfinlab --container-name backups --name $LAST_BACKUP --file /tmp/$LAST_BACKUP
+          gunzip /tmp/$LAST_BACKUP
+          RESTORE_FILE=$(basename /tmp/$LAST_BACKUP .gz)
+          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h ${{ secrets.POSTGRES_HOST }} -U ${{ secrets.POSTGRES_USER }} -d postgres -c "CREATE DATABASE orquestas;"
+          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h ${{ secrets.POSTGRES_HOST }} -U ${{ secrets.POSTGRES_USER }} -d orquestas -f /tmp/$RESTORE_FILE
+        env:
+          AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
+
+      # Bloque de backup
+      - name: Continuar con el flujo de backup si la base de datos existe
+        if: env.DB_EXISTS == 'true'
+        run: |
+          echo "La base de datos 'orquestas' existe. Procediendo con el backup."
+          cd ansible
+          ansible-playbook backup.yaml -i inventory.ini
           az storage blob upload --account-name stavsanchezdvfinlab --container-name backups --file /backups/backup_$(date +%Y-%m-%d).sql.gz.enc --name backup_$(date +%Y-%m-%d).sql.gz.enc --overwrite
         env:
          DATE: $(date +%Y-%m-%d)
