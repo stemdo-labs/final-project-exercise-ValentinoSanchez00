@@ -54,6 +54,7 @@ jobs:
       - name: Verificar si la base de datos existe
         id: check_db
         run: |
+             cd ansible
              ansible-playbook verificacion.yaml -e "postgres_password=${{ secrets.POSTGRE_PASSWORD }} postgres_user=${{ secrets.POSTGRE_USER }} database_name=orquestas"
 
       - name: Cargar variables del archivo generado por Ansible
