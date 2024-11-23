@@ -63,6 +63,6 @@ jobs:
 
       - name: az blob update
         run: |
-          az storage blob upload --account-name stavsanchezdvfinlab --container-name backups --file /backups/backup_2024-11-23.sql.gz.enc --name backup_2024-11-23.sql.gz.enc
+          az storage blob upload --account-name stavsanchezdvfinlab --container-name backups --file /backups/backup_$(date +%Y-%m-%d).sql.gz.enc --name backup_$(date +%Y-%m-%d).sql.gz.enc
         env:
          DATE: $(date +%Y-%m-%d)
