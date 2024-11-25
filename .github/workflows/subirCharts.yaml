@@ -9,12 +9,19 @@ on:
       MICROSERVICE:
         required: true
         type: string
+    secrets:
+      TOKEN_GITHUB:
+        required: true
 jobs:
   empaquetarysubir:
-    runs-on: ubuntu-latest
+    runs-on: runner-stemdo-labs
     steps:
-      - name: Checkout
+      - name: Checkout another repository
         uses: actions/checkout@v3
+        with:
+          repository: stemdo-labs/final-project-exercise-ValentinoSanchez00
+          token: ${{ secrets.TOKEN_GITHUB }}
+        
       
       - name: Replace Variables in chart.yaml frontend
         run: |
