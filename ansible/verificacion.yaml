@@ -1,7 +1,7 @@
 - name: Verificar si la base de datos existe
   hosts: bd
   vars:
-    db_user: myuser
+    db_user: vsanchez
     db_password: mypassword
     db_host: localhost
     db_name: orquestas

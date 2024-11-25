@@ -10,3 +10,6 @@ jobs:
    needs: createInfraestructure
    uses: ./.github/workflows/ansible.yaml
    secrets: inherit
+  subirachivos:
+   uses: ./.github/workflows/subirarchivos.yaml
+   secrets: inherit

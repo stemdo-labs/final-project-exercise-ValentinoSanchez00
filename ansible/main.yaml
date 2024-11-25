@@ -8,7 +8,7 @@
         - name: orquestas  
           state: present  
       postgresql_users:
-        - name: myuser 
+        - name: vsanchez 
           password: mypassword  
           encrypted: yes  
           state: present  
