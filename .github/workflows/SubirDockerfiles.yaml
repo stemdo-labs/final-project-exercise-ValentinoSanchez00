@@ -9,16 +9,16 @@ on:
       MICROSERVICE:
         required: true
         type: string
-      CLIENT_ID:
+      ARM_CLIENT_ID:
         required: true
         type: string
-      CLIENT_SECRET:
+      ARM_CLIENT_SECRET:
         required: true
         type: string
-      TENANT_ID:
+      ARM_TENANT_ID:
         required: true
         type: string
-      SUBSCRIPTION_ID:
+      ARM_SUBSCRIPTION_ID:
         required: true
         type: string
       
@@ -50,17 +50,10 @@ jobs:
               "subscriptionId": "${{ inputs.ARM_SUBSCRIPTION_ID }}"
             }
 
-
-      
       - name: Azure Container Registry Login
         run: az acr login --name containerregistry.azurecr.io
       
-      - name: tagerar la imagen
+      - name: taggear la imagen
         run: |
           docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
           docker push containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
-
-
-
-
-      
