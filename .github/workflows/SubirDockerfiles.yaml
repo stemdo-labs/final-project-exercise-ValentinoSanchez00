@@ -57,7 +57,7 @@ jobs:
       
       - name: tagerar la imagen
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
           docker push containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
 
 
