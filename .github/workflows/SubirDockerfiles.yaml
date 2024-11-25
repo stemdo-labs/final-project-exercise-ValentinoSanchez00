@@ -23,15 +23,14 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ env.AZURE_CREDENTIALS }}
-        env:
-          AZURE_CREDENTIALS: |
+          creds: |
             {
               "clientId": "${{ secrets.ARM_CLIENT_ID }}",
               "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
               "tenantId": "${{ secrets.ARM_TENANT_ID }}",
               "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}"
             }
+
 
       
       - name: Azure Container Registry Login
