@@ -12,8 +12,8 @@ jobs:
       - name: Replace Variables in chart.yaml
         run: |
           cd charts/chart-proyecto
-          sed -i "s/'{{NAME_CHART}}'/${{ env.NAME_CHART }}/g" chart.yaml
-          sed -i "s/'{{VERSION_CHART}}'/${{ env.VERSION_CHART }}/g" chart.yaml
+          sed -i "s/'{{NAME_CHART}}'/${{ env.NAME_CHART }}/g" Chart.yaml
+          sed -i "s/'{{VERSION_CHART}}'/${{ env.VERSION_CHART }}/g" Chart.yaml
         env:
           NAME_CHART: ${{ vars.NAME_CHART }}
           VERSION_CHART: ${{ vars.VERSION_CHART }}
