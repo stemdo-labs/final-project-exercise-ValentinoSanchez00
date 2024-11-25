@@ -1,6 +1,6 @@
 resource "azurerm_kubernetes_cluster" "cluster" {
-  name                = "cluster"
-  location            = var.location
+  name                = "clustervsanchez"
+  location            = "eastus"
   resource_group_name = var.rg_group
   dns_prefix          = "cluster" 
 
