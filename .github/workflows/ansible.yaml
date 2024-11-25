@@ -45,7 +45,5 @@ jobs:
       - name: Install Azure Collection
         run: ansible-galaxy collection install azure.azcollection
 
-  ejecutaransible:
-    needs: install-ansible
-    uses: ./.github/workflows/postgre.yml
+  
  
