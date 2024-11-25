@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: stemdo-labs/final-project-gestion-rrhh-${{ github.event.inputs.MICROSERVICE }}
-          branch: main
+          ref: main
       
       - name: Azure Login
         uses: azure/login@v1
