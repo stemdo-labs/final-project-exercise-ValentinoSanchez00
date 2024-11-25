@@ -1,0 +1,27 @@
+name: CD
+
+on:
+  workflow_call:
+jobs:
+  instalarchart:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Buildear imagenes
+        run: |
+          https://github.com/stemdo-labs/final-project-gestion-rrhh-frontend-ValentinoSanchez00.git
+          https://github.com/stemdo-labs/final-project-gestion-rrhh-backend-ValentinoSanchez00.git
+
+      - name: Instalar Helm Chart
+        env:
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+          NAME_CHART: ${{ vars.NAME_CHART }}
+          VERSION_CHART: ${{ vars.VERSION_CHART }}
+          NAMESPACE: ${{ vars.NAMESPACE }}
+          RELEASE_NAME: ${{ vars.RELEASE_NAME }}
+        run: |
+          helm registry login -u vsanchez -p $HARBOR_PASSWORD harbor.codeops.es
+
+          helm pull oci://harbor.codeops.es:443/vsanchez/${NAME_CHART} --version $VERSION_CHART
+
+         
+          helm upgrade --install $RELEASE_NAME ${NAME_CHART}-${VERSION_CHART}.tgz 

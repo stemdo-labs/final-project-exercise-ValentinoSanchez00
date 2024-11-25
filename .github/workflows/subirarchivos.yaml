@@ -1,0 +1,35 @@
+name: subirarchivos del chart
+
+on:
+  workflow_call:
+jobs:
+  empaquetarysubir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Replace Variables in chart.yaml
+        run: |
+          sed -i "s/'{{NAME_CHART}}'/${{ env.NAME_CHART }}/g" path/to/chart.yaml
+          sed -i "s/'{{VERSION_CHART}}'/${{ env.VERSION_CHART }}/g" path/to/chart.yaml
+        env:
+          NAME_CHART: ${{ vars.NAME_CHART }}
+          VERSION_CHART: ${{ vars.VERSION_CHART }}
+
+      - name: Empaquetar
+        env:
+          NAME_CHART: ${{ vars.NAME_CHART }}
+          VERSION_CHART: ${{ vars.VERSION_CHART }}
+        run: |
+          cd charts/chart-proyecto
+          helm package . --version $VERSION_CHART --app-version $VERSION_CHART
+
+      - name: Subir
+        env:
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+          NAME_CHART: ${{ vars.NAME_CHART }}
+          VERSION_CHART: ${{ vars.VERSION_CHART }}
+        run: |
+          helm registry login -u vsanchez -p $HARBOR_PASSWORD harbor.codeops.es
+          helm push ${NAME_CHART}-${VERSION_CHART}.tgz oci://harbor.codeops.es:443/vsanchez
