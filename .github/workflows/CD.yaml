@@ -8,8 +8,8 @@ jobs:
     steps:
       - name: Buildear imagenes
         run: |
-          https://github.com/stemdo-labs/final-project-gestion-rrhh-frontend-ValentinoSanchez00.git
-          https://github.com/stemdo-labs/final-project-gestion-rrhh-backend-ValentinoSanchez00.git
+          docker build -t final-project-frontend https://github.com/stemdo-labs/final-project-gestion-rrhh-frontend-ValentinoSanchez00.git
+          docker build -t final-project-backend https://github.com/stemdo-labs/final-project-gestion-rrhh-backend-ValentinoSanchez00.git
 
       - name: Instalar Helm Chart
         env:
