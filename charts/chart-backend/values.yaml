@@ -18,18 +18,3 @@ backend:
   service:
     port: 8081
     type: LoadBalancer
-
-frontend:
-  replicas: 2
-  image: final-project-frontend:latest
-  containerPort: 80
-  resources:
-    requests:
-      memory: "128Mi"
-      cpu: "250m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
-  service:
-    port: 80
-    type: LoadBalancer

@@ -4,7 +4,7 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  terraform-apply:
+  terraform-plan:
     runs-on: ubuntu-latest
 
     steps:
