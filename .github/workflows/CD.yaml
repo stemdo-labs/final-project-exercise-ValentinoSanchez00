@@ -1,4 +1,4 @@
-name: CD
+name: Reusable Subir imagen
 
 on:
   workflow_call:
@@ -34,12 +34,12 @@ jobs:
             }
       
       - name: Azure Container Registry Login
-        run: az acr login --name containerregistryvsanchezdvfinlab.azurecr.io
+        run: az acr login --name containerregistry.azurecr.io
       
       - name: tagerar la imagen
         run: |
-          docker tag imagen-proyecto-${{ github.event.inputs.MICROSERVICE }} containerregistryvsanchezdvfinlab.azurecr.io/imagen-proyecto-${{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
-          docker push containerregistryvsanchezdvfinlab.azurecr.io/imagen-proyecto-${{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
+          docker tag imagen-proyecto-${{ github.event.inputs.MICROSERVICE }} containerregistry.azurecr.io/imagen-proyecto-${{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
+          docker push containerregistry.azurecr.io/imagen-proyecto-${{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
 
 
 
