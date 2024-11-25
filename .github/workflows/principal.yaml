@@ -8,9 +8,5 @@ jobs:
     uses: ./.github/workflows/CI.yaml
     secrets: inherit
 
-  #CD:
-  # uses: ./.github/workflows/CD.yaml
-  #  secrets: inherit
-
 
   
