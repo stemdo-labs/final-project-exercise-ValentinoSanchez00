@@ -31,7 +31,7 @@ jobs:
         env:
           HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
           NAME_CHART: chart-${{ inputs.MICROSERVICE }}
-          VERSION_CHART: ${{ imputs.VERSION_CHART }}
+          VERSION_CHART: ${{ inputs.VERSION_CHART }}
         run: |
           cd charts/chart-proyecto
           ls
