@@ -32,6 +32,7 @@ jobs:
               "tenantId": "${{ secrets.ARM_TENANT_ID }}",
               "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}"
             }
+
       
       - name: Azure Container Registry Login
         run: az acr login --name containerregistry.azurecr.io
