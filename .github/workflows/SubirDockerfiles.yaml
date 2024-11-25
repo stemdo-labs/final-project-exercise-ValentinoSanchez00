@@ -9,18 +9,15 @@ on:
       MICROSERVICE:
         required: true
         type: string
+    secrets:
       ARM_CLIENT_ID:
         required: true
-        type: string
       ARM_CLIENT_SECRET:
         required: true
-        type: string
       ARM_TENANT_ID:
         required: true
-        type: string
       ARM_SUBSCRIPTION_ID:
         required: true
-        type: string
       
 jobs:
   subirImagen:
@@ -34,20 +31,20 @@ jobs:
       
       - name: echo secrets
         run: |
-          echo "ARM_CLIENT_ID: ${{ inputs.ARM_CLIENT_ID }}"
-          echo "ARM_CLIENT_SECRET: ${{ inputs.ARM_CLIENT_SECRET }}"
-          echo "ARM_TENANT_ID: ${{ inputs.ARM_TENANT_ID }}"
-          echo "ARM_SUBSCRIPTION_ID: ${{ inputs.ARM_SUBSCRIPTION_ID }}"
+          echo "ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}"
+          echo "ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}"
+          echo "ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}"
+          echo "ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}"
       
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: |
             {
-              "clientId": "${{ inputs.ARM_CLIENT_ID }}",
-              "clientSecret": "${{ inputs.ARM_CLIENT_SECRET }}",
-              "tenantId": "${{ inputs.ARM_TENANT_ID }}",
-              "subscriptionId": "${{ inputs.ARM_SUBSCRIPTION_ID }}"
+              "clientId": "${{ secrets.ARM_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.ARM_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}"
             }
 
       - name: Azure Container Registry Login
