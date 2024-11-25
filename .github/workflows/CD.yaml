@@ -17,8 +17,8 @@ jobs:
       - name: Checkout otro repo
         uses: actions/checkout@v3
         with:
-          # URL del repositorio 
-          repository: stemdo-labs/final-project-gestion-rrhh-${{ github.event.inputs.MICROSERVICE }}@main
+          repository: stemdo-labs/final-project-gestion-rrhh-${{ github.event.inputs.MICROSERVICE }}
+          branch: main
       
       - name: Azure Login
         uses: azure/login@v1
