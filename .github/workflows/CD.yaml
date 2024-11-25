@@ -18,12 +18,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           # URL del repositorio 
-          repository: stemdo-labs/final-project-gestion-rrhh-{{  github.event.inputs.MICROSERVICE }}-ValentinoSanchez00
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: main
-      - name: Buildear imagenes
-        run: |
-          docker build -t imagen-proyecto-{{ github.event.inputs.MICROSERVICE }} .
+          repository: stemdo-labs/final-project-gestion-rrhh-${{ github.event.inputs.MICROSERVICE }} .
       
       - name: Azure Login
         uses: azure/login@v1
@@ -43,8 +38,8 @@ jobs:
       
       - name: tagerar la imagen
         run: |
-          docker tag imagen-proyecto-{{ github.event.inputs.MICROSERVICE }} containerregistryvsanchezdvfinlab.azurecr.io/imagen-proyecto-{{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
-          docker push containerregistryvsanchezdvfinlab.azurecr.io/imagen-proyecto-{{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
+          docker tag imagen-proyecto-${{ github.event.inputs.MICROSERVICE }} containerregistryvsanchezdvfinlab.azurecr.io/imagen-proyecto-${{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
+          docker push containerregistryvsanchezdvfinlab.azurecr.io/imagen-proyecto-${{ github.event.inputs.MICROSERVICE }}:${{ github.event.inputs.VERSION_CHART }}
 
 
 
