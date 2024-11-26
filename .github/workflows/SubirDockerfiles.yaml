@@ -62,11 +62,37 @@ jobs:
         run: |
           docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
 
+      - name: Extraer versión desde package.json (Frontend)
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+        uses: ./.github/actions/packaje.yaml
+        id: frontend-version
+        with:
+          path: ./package.json
+
+      
+      - name: Extraer versión desde pom.xml (Backend)
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
+        uses: ./.github/actions/pom.yaml
+        id: backend-version
+        with:
+          path: ./pom.xml
+        
+      - name: taggear la imagen
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+        run: |
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
       
       - name: taggear la imagen
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
       
-      - name: Pushear
+      - name: Pushear imagen (Frontend)
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-         docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
+
+      - name: Pushear imagen (Backend)
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
+        run: |
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
