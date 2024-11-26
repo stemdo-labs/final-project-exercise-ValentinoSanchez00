@@ -32,7 +32,7 @@ jobs:
       - name: Empaquetar
         run: |
           cd charts/
-          helm package ./chart-${{ inputs.MICROSERVICE }} --version ${{ inputs.VERSION_CHART }} --app-version ${{ inputs.VERSION_CHART }}
+          helm package ./chart-${{ inputs.MICROSERVICE }} 
 
       - name: Subir
         env:
