@@ -49,4 +49,4 @@ jobs:
           cd charts/
           ls
           helm registry login harbor.codeops.es -u vsanchez -p $HARBOR_PASSWORD
-          sudo helm push ${NAME_CHART}-${VERSION_CHART}.tgz oci://harbor.codeops.es/vsanchez
+          helm push ${NAME_CHART}-${VERSION_CHART}.tgz oci://harbor.codeops.es/vsanchez
