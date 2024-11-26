@@ -25,12 +25,6 @@ jobs:
           token: ${{ secrets.TOKEN_GITHUB }}
         
       
-      - name: Replace Variables in chart.yaml frontend
-        run: |
-          cd charts
-          sed -i "s/'{{NAME_CHART}}'/${{ inputs.MICROSERVICE }}/g" chart-${{ inputs.MICROSERVICE }}/Chart.yaml
-          sed -i "s/'{{VERSION_CHART}}'/${{ inputs.VERSION_CHART }}/g" chart-${{ inputs.MICROSERVICE }}/Chart.yaml
-      
       - name: Install helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash

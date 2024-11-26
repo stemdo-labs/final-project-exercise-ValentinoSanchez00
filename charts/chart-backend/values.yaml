@@ -17,4 +17,4 @@ backend:
     SPRING_DB_PASSWORD: "mypassword"
   service:
     port: 8081
-    type: LoadBalancer
+    type: ClusterIP
