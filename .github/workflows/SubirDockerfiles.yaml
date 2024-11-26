@@ -65,8 +65,8 @@ jobs:
       
       - name: taggear la imagen
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
       
       - name: Pushear
         run: |
-         docker push containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
+         docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
