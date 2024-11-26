@@ -1,6 +1,6 @@
 backend:
   replicas: 2
-  image: final-project-backend:latest
+  image: containerregistry.azurecr.io/imagen-proyecto-backend
   containerPort: 8081
   resources:
     requests:

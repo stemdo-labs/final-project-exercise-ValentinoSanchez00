@@ -1,7 +1,7 @@
 
 frontend:
   replicas: 2
-  image: final-project-frontend:latest
+  image: containerregistry.azurecr.io/imagen-proyecto-frontend
   containerPort: 80
   resources:
     requests:
