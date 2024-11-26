@@ -58,6 +58,11 @@ jobs:
           username: ${{ secrets.ARM_CLIENT_ID }}
           password: ${{ secrets.ARM_CLIENT_SECRET }}
       
+      - name: Construir imagen
+        run: |
+          docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
+
+      
       - name: taggear la imagen
         run: |
           docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
