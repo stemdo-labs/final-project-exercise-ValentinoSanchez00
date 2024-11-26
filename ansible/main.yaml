@@ -74,3 +74,4 @@
     #   become_user: postgres
     #   shell: |
     #     psql -c "ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}';"
+    # xd
