@@ -57,7 +57,7 @@ jobs:
       
       - name: Extraer versión desde package.json (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
-        uses: ./.github/actions/fontend
+        uses: ./.github/actions/frontend
         id: frontend-version
         with:
           path: ./package.json
