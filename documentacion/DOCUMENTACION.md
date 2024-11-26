@@ -143,7 +143,7 @@ Actualmente, información sensible como las contraseñas de la base de datos, la
 2. **Implementación completa de Disaster Recovery**: Finalizar el flujo de recuperación automática para garantizar la disponibilidad continua de la base de datos.
 3. **Mejoras de seguridad**: Implementar ConfigMaps y Secretos en toda la infraestructura.
 4. **Optimización de CI/CD**: Simplificar y automatizar el flujo de despliegue, eliminando la necesidad de inputs manuales.
-5. **Documentación mejorada**: Incluir guías detalladas para la ejecución de cada flujo.
+
 
 ---
 
