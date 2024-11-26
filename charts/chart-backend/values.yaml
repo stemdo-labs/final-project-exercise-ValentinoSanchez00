@@ -1,5 +1,5 @@
 backend:
-  replicas: 2
+  replicas: 1
   image: containerregistry.azurecr.io/imagen-proyecto-backend:0.0.1-SNAPSHOT
   containerPort: 8081
   resources:
