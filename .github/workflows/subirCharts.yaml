@@ -45,7 +45,7 @@ jobs:
           NAME_CHART: chart-${{ inputs.MICROSERVICE }}
           VERSION_CHART: ${{ inputs.VERSION_CHART }}
         run: |
-          cd charts/chart-proyecto
+          cd charts/
           ls
           helm registry login -u vsanchez -p $HARBOR_PASSWORD harbor.codeops.es
           sudo helm push ${NAME_CHART}-${VERSION_CHART}.tgz oci://harbor.codeops.es/vsanchez
