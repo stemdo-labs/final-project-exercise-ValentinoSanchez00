@@ -1,124 +1,156 @@
 # Documentación
 
-En esta documentación hablaré de los pasos que he dado para realizar este proyecto
+En esta documentación detallo los pasos seguidos para desarrollar este proyecto, las decisiones tomadas, los retos enfrentados y los planes a futuro.
 
-# Resumen
-Este proyecto trata de tener por un lado 2 mv (una la bd y otra la de backups) en una vnet y otra vnet con el cluster donde está almacenado el front y back. el objetibo es que el back conecte con la bd y podamos registrar 
-cosas en ella a través del front
+---
 
-# Estructura
+## Resumen
 
-Este proyecto consta de 3 repos, el principal que es este y dos secundarios donde almacenamos el back y front 
-[back](https://github.com/stemdo-labs/final-project-gestion-rrhh-backend-ValentinoSanchez00)
-[front](https://github.com/stemdo-labs/final-project-gestion-rrhh-frontend-ValentinoSanchez00)
+Este proyecto consiste en diseñar una infraestructura que incluye dos máquinas virtuales (MV) en una red virtual (vNet): una dedicada a la base de datos (BD) y otra para respaldos. Además, otra vNet alberga un clúster donde se despliega el frontend y backend de la aplicación. El objetivo principal es que el backend se conecte con la base de datos para registrar información, permitiendo su interacción a través del frontend.
 
-Hablamos de este repositorio primero y seguidamente de los otros repos
+---
+
+## Estructura
+
+Este proyecto está dividido en tres repositorios:
+
+- **Repositorio principal**: Contiene la infraestructura, workflows de automatización, playbooks de Ansible y charts de Helm.
+- **Repositorio backend**: Código del backend y su integración CI/CD.
+- **Repositorio frontend**: Código del frontend y su integración CI/CD.
+
+Links a los repos secundarios:
+- [Backend](https://github.com/stemdo-labs/final-project-gestion-rrhh-backend-ValentinoSanchez00)
+- [Frontend](https://github.com/stemdo-labs/final-project-gestion-rrhh-frontend-ValentinoSanchez00)
+
+---
 
 ## Repositorio principal
 
-Consta de 4 partes:
+El repositorio principal consta de cuatro secciones clave:
 
-- Actions y workflows
-- Playtbooks de ansible
-- Charts de helm
-- Infraestructura
+### 1. Actions y workflows
 
+La mayoría de los workflows son de tipo `dispatch` o reutilizables. Los principales workflows incluyen:
 
-### Actions y workflows
-La mayoría de estos workflows son o dispach o reusables, los dispach es sobretodo cuando quiera levantar la infraestructura, descargar ansible en la maquina virtual de la misma vnet de la bd
-y instalar postgres en la bd de la vnet mencionada. Pero también hay reusables que utilizan los otros repos para el flujo de trabajo suyos
+- **InfrastructurePlan**: Genera un plan de infraestructura en las PRs para detectar errores.
+- **InfrastructureApply**: Aplica los cambios de infraestructura al cerrar una PR.
+- **Backup**: Realiza un backup de la BD cada 5 horas (actualmente deshabilitado por límites de uso).
+- **InfraestructureDown**: Dismantela la infraestructura automáticamente.
 
-Los tres workflows principales en este repo son:
-- infraestructureapply
-- infraestructureplan
-- backup
+Además, incluye workflows reutilizables, como `SubirCharts` y `SubirDockerfiles`, utilizados por los repos secundarios.
 
-Los de la infraestructuras son para que cuando se genere una pr se actibe el plan de la infra por si hay errores y cuando se cierre haga el aplpy
-El backup realiza un backup de la bd cada 5h , está desabilitado por temas de limites de uso
-También hay un workflow que baja la infraestructura por si necesitamos bajarla de manera automatica en vez de por comandos
+---
 
-SubirCharts y subirDockerfiles son dos reusables que se usan el los siguientes repos
+### 2. Playbooks de Ansible
 
+Incluyen scripts para instalar dependencias como Ansible, realizar backups e instalar PostgreSQL. Se ejecutan automáticamente en los hosts definidos en `inventory.ini`.
 
-### Playbooks de Ansible
+---
 
-Son playbooks llamados por workflows que cumplen diferentes funciones como instalar ansible, realizar el backup e instalar postgres.
-Cada una cumple su función cuando es llamado yt lo realiza al host mencionado en el inventario.ini
+### 3. Charts de Helm
 
+Se han creado dos charts, uno para el backend y otro para el frontend. Estos definen:
 
-### Charts De Helm
+- **Deployments**: Configuración del despliegue de cada microservicio.
+- **Servicios**: Expone cada componente para la comunicación entre ellos.
 
-Tenemos dos, uno para el back y otro para el front, cada una con sus retrinciones y las imagenes usadas son imagenes que abarcan en el azr 
-Cada uno tiene un deployment y un servicio como se ve en las siguientes imagenes:
+![Helm Charts Backend y Frontend](https://github.com/user-attachments/assets/c613b3a9-85f9-4b79-b636-dcb15c477ca2)
 
-![image](https://github.com/user-attachments/assets/c613b3a9-85f9-4b79-b636-dcb15c477ca2)  ![image](https://github.com/user-attachments/assets/f6f21290-a2cf-4916-8ec8-a01832991edd)
+---
 
+### 4. Infraestructura (IaC)
 
-### iac 
-Aquí está toda la infraestructura usada para el proyecto, consta de 16 recursos
+El proyecto incluye la definición de 16 recursos principales:
 
-![image](https://github.com/user-attachments/assets/7aa3855c-5ccf-4637-a727-8a373f8d7710)
+- **2 vNets**: Cada una con su subnet correspondiente.
+- **2 Peerings**: Para comunicar las vNets.
+- **2 Interfaces de red**: Asociadas a las máquinas virtuales.
+- **1 Clúster Kubernetes**: Para desplegar el backend y frontend.
+- **1 Registro de contenedores**: Almacena las imágenes Docker.
+- **2 Contenedores**: Backend y frontend.
+- **1 Security Group**: Control de acceso.
+- **2 Máquinas virtuales**: Una para la BD y otra para los respaldos.
 
-Los mas principales son:
-- 2 vnets (cada una con su subnet)
-- 2 peering
-- 2 interfaces de red
-- 1 cluster
-- 1 registro de contenedores
-- 2 contenedores
-- 1 security group
-- 2 maquinas virtuales
+![Recursos IaC](https://github.com/user-attachments/assets/7aa3855c-5ccf-4637-a727-8a373f8d7710)
 
-Vamos a hablar de los 2 repos subyacentes
+---
 
-## Frontend
-En el primer repo subyacente encontramos la estructura de una pagina web con el dockerfile para que la ponga en un contenedor y unos workflow que utilizan los reusables del flujo principal 
-aqui esta implementado un CI/CD mediante dispach, lo hablaremos mas adelante cuando hable del flujo
+## Repositorios secundarios
 
-![image](https://github.com/user-attachments/assets/9e54e489-0798-4a81-bfbd-3c8853fbd421)
+### Frontend
 
+Estructura básica de una aplicación web con un `Dockerfile` para contenerización. Incluye workflows CI/CD que utilizan los workflows reutilizables del repositorio principal.
 
-## Backend
+![Estructura Frontend](https://github.com/user-attachments/assets/9e54e489-0798-4a81-bfbd-3c8853fbd421)
 
-En el primer repo subyacente encontramos la estructura de un backend con el dockerfile para que la ponga en un contenedor y unos workflow que utilizan los reusables del flujo principal 
-aqui esta implementado un CI/CD mediante dispach, lo hablaremos mas adelante cuando hable del flujo
+---
 
+### Backend
 
-![image](https://github.com/user-attachments/assets/4f483991-ef02-4fec-99ee-f215ae0d1596)
+Código backend, también containerizado, con workflows CI/CD basados en los reutilizables del repositorio principal.
 
+![Estructura Backend](https://github.com/user-attachments/assets/4f483991-ef02-4fec-99ee-f215ae0d1596)
 
-# Flujo
+---
 
-EL usuario deberá iniciar la infraestructura haciendo un merge a main en el repo principal , así se hará un plan y un apply 
-Tras esto debemos crear un runner en nuestra maquina de backups conectandonos por ssh y la ip pública, para ello vamos a settings -> actions -> runners y vamos a crear un nuevo runner
+## Flujo
 
-![image](https://github.com/user-attachments/assets/6306f320-89d1-420b-b8b2-da35509d11aa)
+1. **Inicio de infraestructura**: Se realiza un merge a `main` en el repositorio principal, lo que activa los workflows de `plan` y `apply` para levantar la infraestructura.
+2. **Configuración de runner**: Se conecta a la máquina virtual de respaldos vía SSH y configura un runner desde `Settings -> Actions -> Runners`.
+3. **Ejecución de playbooks**: Se ejecutan los workflows `ansible` y `postgres` para preparar la BD.
+4. **Despliegue del frontend y backend**:
+   - CI: `SubirDockerfile.yaml` y `SubirChart.yaml` para subir los Dockerfiles y charts a Azure y Harbor.
+   - CD: `Principal.yaml` para desplegar las imágenes en el clúster.
 
+---
 
-Ese condigo de comando lo copiamos en nuestra mv que va a ser nuestro runner, en nuestrop caso es la maquina virtual de backups
-Una vez hecho ejecutamos los dispach en este orde : ansible, postgre
-cunado se completen ya tendrás una bd llamada orquestas y un usuario vsanchez ( en mi caso, si quieres cambiarlo ve al código y cambialo)
+## Fallos y mejoras pendientes
 
-Ahora nos vamos a los repos adyacentes :
-Estos tienen un CD/CI a través de dispachs porque no he conseguido ver el flujo de una manera mas automatizada ya que cada flujo requiere inputs puestos manualmente
+### 1. Dockerfiles
 
-Ejecutamos SubirDockerfile.yaml y SubirChart.yaml , ambas tienen un imput llamado microservicio q por defecto es frontend, el usuario puede cambiarlo a como lo quiera llamar pero con la condición de que lo cambie en los demás . Estos suben los dockerfiles a el azr y los charts a el harbor proporcionado (CI) 
-Posteriormente ejecutaríamos el principal.yaml (CD)  que tiene dos imputs , el de microservicios y la version del chart, el de microservicio es el mencionado anteriormente y la version del chart es la versión subida que queramos ejecutar. Este flujo recoge el dockerfile y el chart propio y depliega el front o back en el cluster
+No se logró que las imágenes Docker se construyeran correctamente, resultando en errores de tipo `ErrImagePull`. Aunque las imágenes se suben correctamente a Azure:
 
+```bash
+az acr repository list --name containerregistryvsanchez --output table
+```
 
-# Fallos y cosas a mejorar
+### 2. Disaster Recovery
 
+El flujo de recuperación (`recuperacion.yaml`) está iniciado, pero no completado. La idea principal es implementar un mecanismo que:
 
+1. Realice verificaciones periódicas de la integridad de la base de datos.
+2. En caso de detectar problemas (base de datos dañada o ausente), restaure la base de datos a partir del último backup disponible.
+3. Continúe generando backups regularmente si la base de datos está íntegra.
 
+Actualmente, el flujo únicamente realiza backups y no restaura automáticamente.
 
+---
 
+### 3. ConfigMaps y secretos
 
+Actualmente, información sensible como las contraseñas de la base de datos, las claves SSH y las credenciales de las máquinas virtuales se encuentran en texto plano. La solución planteada consiste en:
 
+1. Utilizar **ConfigMaps** para almacenar configuraciones no sensibles.
+2. Utilizar **Secretos** de Kubernetes para manejar información sensible de manera segura.
+3. Actualizar los charts de Helm para que consuman estas configuraciones y secretos en lugar de incluir valores sensibles directamente.
 
+---
 
+## Planes a futuro
 
+1. **Solución de errores en los Dockerfiles**: Asegurar que las imágenes se construyan correctamente y se puedan desplegar sin errores de tipo `ErrImagePull`.
+2. **Implementación completa de Disaster Recovery**: Finalizar el flujo de recuperación automática para garantizar la disponibilidad continua de la base de datos.
+3. **Mejoras de seguridad**: Implementar ConfigMaps y Secretos en toda la infraestructura.
+4. **Optimización de CI/CD**: Simplificar y automatizar el flujo de despliegue, eliminando la necesidad de inputs manuales.
+5. **Documentación mejorada**: Incluir guías detalladas para la ejecución de cada flujo.
 
+---
 
+## Conclusión
 
+Este proyecto ha sido un auténtico reto, y aunque no he conseguido que todo funcione como esperaba, he aprendido muchísimo durante el proceso. Los malditos Dockerfiles me han traído por la calle de la amargura con errores de `ErrImagePull` que no logré resolver a tiempo. Además, tuve que dejar a medias el flujo de recuperación de desastres porque el tiempo no daba para más. 
 
+A pesar de todo, me ha gustado mucho trabajar en este proyecto. Ver cómo se iban construyendo las piezas poco a poco, desde la infraestructura hasta los workflows de CI/CD, ha sido súper satisfactorio. Aunque no he llegado al objetivo final, siento que he puesto una buena base que podría convertirse en algo funcional y escalable con un poco más de tiempo y paciencia.
+
+Tengo claro que en el futuro quiero volver a este proyecto, solucionar los problemas pendientes y llevarlo al siguiente nivel. ¡Esto no termina aquí!
 
