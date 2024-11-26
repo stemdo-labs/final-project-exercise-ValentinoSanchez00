@@ -3,9 +3,6 @@ name: Reusable Subir imagen
 on:
   workflow_call:
     inputs:
-      VERSION_CHART:
-        required: true
-        type: string
       MICROSERVICE:
         required: true
         type: string
@@ -58,10 +55,6 @@ jobs:
           username: ${{ secrets.ARM_CLIENT_ID }}
           password: ${{ secrets.ARM_CLIENT_SECRET }}
       
-      - name: Construir imagen
-        run: |
-          docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
-
       - name: Extraer versión desde package.json (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         uses: ./.github/actions/packaje.yaml
@@ -76,6 +69,12 @@ jobs:
         id: backend-version
         with:
           path: ./pom.xml
+      
+      - name: Construir imagen
+        run: |
+          docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
+
+      
         
       - name: taggear la imagen
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
