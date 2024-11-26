@@ -66,18 +66,8 @@ resource "azurerm_container_registry" "acr" {
   name                = "containerRegistryvsanchez"
   resource_group_name = var.rg_group
   location            = var.location
-  sku                 = "Premium"
+  sku                 = "Basic"
   admin_enabled       = false
-  georeplications {
-    location                = "West Europe"
-    zone_redundancy_enabled = true
-    tags                    = {}
-  }
-  georeplications {
-    location                = "West Europe"
-    zone_redundancy_enabled = true
-    tags                    = {}
-  }
 }
 
 
