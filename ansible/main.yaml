@@ -12,7 +12,7 @@
           password: mypassword  
           encrypted: yes  
           state: present  
-          
+  tasks:
     - name: Configurar listen_addresses = '*' en postgresql.conf
       become: yes
       become_user: root
