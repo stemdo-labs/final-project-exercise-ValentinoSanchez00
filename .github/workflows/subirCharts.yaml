@@ -31,7 +31,8 @@ jobs:
 
       - name: Empaquetar
         run: |
-          cd charts/chart-proyecto
+          cd charts/
+          ls
           helm package . --version ${{ inputs.VERSION_CHART }} --app-version ${{ inputs.VERSION_CHART }}
 
       - name: Subir
