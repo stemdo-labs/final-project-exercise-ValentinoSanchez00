@@ -21,7 +21,7 @@ on:
       
 jobs:
   subirImagen:
-    runs-on: self-hosted
+    runs-on: runner-stemdo-labs-bsxdl-mg4f9
     steps:
       - name: Checkout 
         uses: actions/checkout@v3

@@ -14,7 +14,7 @@ on:
         required: true
 jobs:
   empaquetarysubir:
-    runs-on: self-hosted
+    runs-on: runner-stemdo-labs-bsxdl-mg4f9
     steps:
       - name: Checkout another repository
         uses: actions/checkout@v3
