@@ -9,6 +9,7 @@ inputs:
 outputs:
   version:
     description: "La versión extraída del archivo pom.xml"
+    value: ${{ steps.extraer-version.outputs.version }}
 runs:
   using: "composite"
   steps:
