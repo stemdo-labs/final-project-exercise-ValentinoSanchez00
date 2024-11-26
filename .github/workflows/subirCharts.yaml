@@ -38,13 +38,12 @@ jobs:
       - name: Empaquetar
         run: |
           cd charts/
-          ls
           helm package ./chart-${{ inputs.MICROSERVICE }} --version ${{ inputs.VERSION_CHART }} --app-version ${{ inputs.VERSION_CHART }}
 
       - name: Subir
         env:
           HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
-          NAME_CHART: chart-${{ inputs.MICROSERVICE }}
+          NAME_CHART: ${{ inputs.MICROSERVICE }}
           VERSION_CHART: ${{ inputs.VERSION_CHART }}
         run: |
           cd charts/
