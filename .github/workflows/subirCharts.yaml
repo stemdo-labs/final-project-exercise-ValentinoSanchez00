@@ -38,7 +38,7 @@ jobs:
         run: |
           cd charts/
           ls
-          CHART_FILE=$(ls -t ${NAME_CHART}-*.tgz | head -n 1)
+          CHART_FILE=$(ls -t *${NAME_CHART}-*.tgz | head -n 1)
           echo "Subiendo chart ${CHART_FILE}"
           helm registry login harbor.codeops.es -u vsanchez -p $HARBOR_PASSWORD
           helm push $CHART_FILE oci://harbor.codeops.es/vsanchez
