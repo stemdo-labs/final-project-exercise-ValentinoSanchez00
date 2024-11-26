@@ -3,9 +3,6 @@ name: subirarchivos del chart
 on:
   workflow_call:
     inputs:
-      VERSION_CHART:
-        required: true
-        type: string
       MICROSERVICE:
         required: true
         type: string
@@ -38,9 +35,10 @@ jobs:
         env:
           HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
           NAME_CHART: ${{ inputs.MICROSERVICE }}
-          VERSION_CHART: ${{ inputs.VERSION_CHART }}
         run: |
           cd charts/
           ls
+          CHART_FILE=$(ls -t ${NAME_CHART}-*.tgz | head -n 1)
+          echo "Subiendo chart ${CHART_FILE}"
           helm registry login harbor.codeops.es -u vsanchez -p $HARBOR_PASSWORD
-          helm push ${NAME_CHART}-${VERSION_CHART}.tgz oci://harbor.codeops.es/vsanchez
+          helm push $CHART_FILE oci://harbor.codeops.es/vsanchez
