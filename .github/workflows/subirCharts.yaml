@@ -12,6 +12,8 @@ on:
     secrets:
       TOKEN_GITHUB:
         required: true
+      HARBOR_PASSWORD:
+        required: true
 jobs:
   empaquetarysubir:
     runs-on: runner-stemdo-labs
