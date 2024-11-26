@@ -14,22 +14,15 @@ spec:
       labels:
         app: backend
     spec:
+      imagePullSecrets: # Este campo se movió aquí
+        - name: acr-secret
       containers:
       - name: backend
         image: {{ .Values.backend.image }}
         ports:
         - containerPort: {{ .Values.backend.containerPort }}
-        imagePullSecrets:
-          - name: acr-secret
         env:
         {{- range $key, $value := .Values.backend.env }}
         - name: {{ $key }}
           value: "{{ $value }}"
         {{- end }}
-        resources:
-          requests:
-            memory: {{ .Values.backend.resources.requests.memory }}
-            cpu: {{ .Values.backend.resources.requests.cpu }}
-          limits:
-            memory: {{ .Values.backend.resources.limits.memory }}
-            cpu: {{ .Values.backend.resources.limits.cpu }}
