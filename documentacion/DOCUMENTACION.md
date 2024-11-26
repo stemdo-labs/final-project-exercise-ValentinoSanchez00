@@ -54,7 +54,8 @@ Se han creado dos charts, uno para el backend y otro para el frontend. Estos def
 - **Deployments**: Configuración del despliegue de cada microservicio.
 - **Servicios**: Expone cada componente para la comunicación entre ellos.
 
-![Helm Charts Backend y Frontend](https://github.com/user-attachments/assets/c613b3a9-85f9-4b79-b636-dcb15c477ca2)
+![Helm Charts Backend y Frontend](https://github.com/user-attachments/assets/c613b3a9-85f9-4b79-b636-dcb15c477ca2)                ![image](https://github.com/user-attachments/assets/11ed69ae-7583-44aa-b527-55a22e231fd9)
+
 
 ---
 
