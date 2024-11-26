@@ -12,3 +12,21 @@
           password: mypassword  
           encrypted: yes  
           state: present  
+          
+    - name: Configurar listen_addresses = '*' en postgresql.conf
+      become: yes
+      become_user: root
+      lineinfile:
+        path: "/etc/postgresql/14/main/postgresql.conf"  
+        regexp: '^#?listen_addresses ='
+        line: "listen_addresses = '*'"
+        state: present
+ 
+    - name: Configurar acceso en pg_hba.conf para orquestas
+      become: yes
+      become_user: root
+      lineinfile:
+        path: "/etc/postgresql/14/main/pg_hba.conf"
+        regexp: '^host\s+all\s+orquestas\s+10.0.0.4/32\s+md5'
+        line: "host    all             orquestas       0.0.0.0/0               md5"
+        state: present
