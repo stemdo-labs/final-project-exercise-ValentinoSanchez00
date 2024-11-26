@@ -3,9 +3,6 @@ name: Reusable Subir imagen
 on:
   workflow_call:
     inputs:
-      VERSION_CHART:
-        required: true
-        type: string
       MICROSERVICE:
         required: true
         type: string
@@ -58,7 +55,43 @@ jobs:
           username: ${{ secrets.ARM_CLIENT_ID }}
           password: ${{ secrets.ARM_CLIENT_SECRET }}
       
-      - name: taggear la imagen
+      - name: Extraer versión desde package.json (Frontend)
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+        uses: ./.github/actions/frontend
+        id: frontend-version
+        with:
+          path: ./package.json
+
+      
+      - name: Extraer versión desde pom.xml (Backend)
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
+        uses: ./.github/actions/backend
+        id: backend-version
+        with:
+          path: ./pom.xml
+      
+      - name: Construir imagen
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
-          docker push containerregistry.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ inputs.VERSION_CHART }}
+          docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
+
+      
+        
+      - name: taggear la imagen
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+        run: |
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
+      
+      - name: taggear la imagen
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
+        run: |
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
+      
+      - name: Pushear imagen (Frontend)
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+        run: |
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
+
+      - name: Pushear imagen (Backend)
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
+        run: |
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
