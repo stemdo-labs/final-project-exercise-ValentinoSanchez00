@@ -17,7 +17,8 @@ runs:
       id: extraer-version
       shell: bash
       run: |
-        VERSION=$(grep -oP '<version>\\K[^<]+' "${{ inputs.path }}" | sed -n '2p')
+        VERSION=$(grep -o '<version>[^<]*</version>' "${{ inputs.path }}" | sed -e 's/<\/\?version>//g' | sed -n '2p')
+
         if [ -z "$VERSION" ]; then
           echo "Error: No se pudo extraer la versión del archivo pom.xml"
           exit 1
