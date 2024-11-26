@@ -57,7 +57,7 @@ jobs:
       
       - name: Extraer versión desde package.json (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
-        uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/frontend/action.yaml
+        uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/frontend@develop
         id: frontend-version
         with:
           path: ./package.json
@@ -65,7 +65,7 @@ jobs:
       
       - name: Extraer versión desde pom.xml (Backend)
         if: ${{ inputs.MICROSERVICE == 'backend' }}
-        uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/backend/action.yaml
+        uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/backend@develop
         id: backend-version
         with:
           path: ./pom.xml
