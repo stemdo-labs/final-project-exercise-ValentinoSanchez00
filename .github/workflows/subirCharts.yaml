@@ -33,7 +33,7 @@ jobs:
         run: |
           cd charts/
           ls
-          helm package . --version ${{ inputs.VERSION_CHART }} --app-version ${{ inputs.VERSION_CHART }}
+          helm package ./chart-${{ inputs.MICROSERVICE }} --version ${{ inputs.VERSION_CHART }} --app-version ${{ inputs.VERSION_CHART }}
 
       - name: Subir
         env:
