@@ -5,10 +5,3 @@ resource "azurerm_virtual_network" "machines" {
   location            = var.location
   resource_group_name = var.rg_group
 }
-
-resource "azurerm_virtual_network" "cluster" {
-  name                = "virtual-network-cluster"
-  address_space       = ["10.1.0.0/16"]
-  location            = "eastus"
-  resource_group_name = var.rg_group
-}

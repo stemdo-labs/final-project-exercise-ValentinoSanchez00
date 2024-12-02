@@ -4,7 +4,7 @@ on:
 
 jobs:
   terraform-destroy:
-    runs-on: runner-stemdo-labs
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout

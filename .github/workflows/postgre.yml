@@ -7,6 +7,8 @@ jobs:
   install-postgre:    
     runs-on: self-hosted
     steps:
+      - name: clonar repositorio
+        uses: actions/checkout@v3
       - name: entrar a los archivos de ansible
         run: cd ansible
 
