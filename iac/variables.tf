@@ -13,5 +13,5 @@ variable "address_space" {
 variable "location" {
   description = "value of the location"
   type = string
-  default = "UK South "
+  default = "Northeurope"
 }

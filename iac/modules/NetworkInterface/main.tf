@@ -8,7 +8,7 @@ resource "azurerm_public_ip" "ippublics" {
 resource "azurerm_network_interface" "network_interface" {
   count = 2
   name                = "network-interface-${count.index}"
-  location            = var.location
+  location            = "UK South"
   resource_group_name = var.rg_group
 
   ip_configuration {
