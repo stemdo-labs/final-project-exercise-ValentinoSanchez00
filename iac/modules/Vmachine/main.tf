@@ -1,7 +1,7 @@
 resource "azurerm_virtual_machine" "virtual_machine" {
   count = 2
   name                  = "virtual-machine-${count.index}"
-  location              = var.location
+  location              = "UK South"
   resource_group_name   = var.rg_group
   network_interface_ids = [var.network_interface_ids[count.index < 1 ? 0 : 1]]
   vm_size               = "Standard_B1ms"
