@@ -5,7 +5,7 @@ on:
 
 jobs:
   terraform-apply:
-    runs-on: runner-stemdo-labs
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout

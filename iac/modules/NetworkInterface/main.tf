@@ -13,7 +13,7 @@ resource "azurerm_network_interface" "network_interface" {
 
   ip_configuration {
     name                          = "ipconfig${count.index}"
-    subnet_id                     = var.subnet_ids[count.index < 2 ? 0 : 1]
+    subnet_id                     = "/subscriptions/86f76907-b9d5-46fa-a39d-aff8432a1868/resourceGroups/final-project-common/providers/Microsoft.Network/virtualNetworks/vnet-common-bootcamp/subnets/sn-vsanchez"
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = count.index == 1 ? azurerm_public_ip.ippublics.id : null
   }
