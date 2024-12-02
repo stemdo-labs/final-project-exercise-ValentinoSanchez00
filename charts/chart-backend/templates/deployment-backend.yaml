@@ -14,7 +14,7 @@ spec:
       labels:
         app: backend
     spec:
-      imagePullSecrets: # Este campo se movió aquí
+      imagePullSecrets: 
         - name: acr-secret
       containers:
       - name: backend

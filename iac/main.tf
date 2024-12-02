@@ -63,7 +63,7 @@ module "cluster" {
 
 # Poner esto en modulo
 resource "azurerm_container_registry" "acr" {
-  name                = "containerRegistryvsanchez"
+  name                = "containerregistrvsanchez"
   resource_group_name = var.rg_group
   location            = var.location
   sku                 = "Basic"
