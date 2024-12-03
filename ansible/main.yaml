@@ -64,7 +64,7 @@
       lineinfile:
         path: "/etc/postgresql/14/main/pg_hba.conf"
         regexp: '^host\s+all\s+orquestas\s+0.0.0.0/0\s+md5'
-        line: "host    all             orquestas       0.0.0.0/0               md5"
+        line: "host    all             hall       0.0.0.0/0                  md5"
         state: present
 
     - name: Configurar acceso en pg_hba.conf para orquestas (10.0.0.4/32)
