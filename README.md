@@ -2,7 +2,7 @@
 
 ## Introducción
 
-El objetivo de este proyecto es desarrollar y desplegar una aplicación completa, abarcando todas las etapas del ciclo de vida de desarrollo y adoptando una mentalidad DevOps que incluya prácticas de seguridad. t
+El objetivo de este proyecto es desarrollar y desplegar una aplicación completa, abarcando todas las etapas del ciclo de vida de desarrollo y adoptando una mentalidad DevOps que incluya prácticas de seguridad. 
 
 ---
 
