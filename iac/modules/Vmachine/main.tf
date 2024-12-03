@@ -1,9 +1,8 @@
 resource "azurerm_virtual_machine" "virtual_machine" {
-  count = 2
-  name                  = "virtual-machine-${count.index}"
+  name                  = "virtual-machine-vsanchez"
   location              = "UK South"
   resource_group_name   = var.rg_group
-  network_interface_ids = [var.network_interface_ids[count.index < 1 ? 0 : 1]]
+  network_interface_ids = [var.network_interface_ids]
   vm_size               = "Standard_B1ms"
 
   storage_image_reference {
@@ -14,7 +13,7 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   }
 
   storage_os_disk {
-    name              = "mydiskmachine${count.index}"
+    name              = "mydiskmachine"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
