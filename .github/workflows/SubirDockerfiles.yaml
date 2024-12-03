@@ -50,7 +50,7 @@ jobs:
       
       - name: Login AZR
         run: |
-          az acr login --name containerregistrvsanchez
+          az acr login --name containerregistryvsanchez
 
       - name: Extraer versión desde package.json (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
