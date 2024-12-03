@@ -49,11 +49,8 @@ jobs:
             }
 
       - name: Azure Container Registry Login
-        uses: docker/login-action@v3
-        with:
-          registry: containerregistrvsanchez.azurecr.io
-          username: ${{ secrets.ARM_CLIENT_ID }}
-          password: ${{ secrets.ARM_CLIENT_SECRET }}
+        run: |
+          docker login containerregistrvsanchez.azurecr.io -u ${{ secrets.ARM_CLIENT_ID }} -p ${{ secrets.ARM_CLIENT_SECRET }}
       
       - name: Extraer versión desde package.json (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
