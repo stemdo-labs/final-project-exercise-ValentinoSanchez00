@@ -48,6 +48,23 @@ resource "azurerm_storage_container" "backups" {
   storage_account_name  = "stavsanchezdvfinlab"
   
 }
+resource "azurerm_network_security_group" "securitygroup" {
+  name                = "securitygroup"
+  location            = var.location
+  resource_group_name = var.rg_group
+
+  security_rule {
+    name                       = "securityRule1"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
 
 #resource "azurerm_subnet_network_security_group_association" "assosiaton" {
 #  subnet_id                 = "/subscriptions/86f76907-b9d5-46fa-a39d-aff8432a1868/resourceGroups/final-project-common/providers/Microsoft.Network/virtualNetworks/vnet-common-bootcamp/subnets/sn-vsanchez"
