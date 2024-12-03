@@ -48,6 +48,10 @@ jobs:
               "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}"
             }
       
+      - name: Login AZR
+        run: |
+          az acr login --name containerregistrvsanchez
+
       - name: Extraer versión desde package.json (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/frontend@develop
@@ -82,13 +86,11 @@ jobs:
       - name: Pushear imagen (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          docker login containerregistrvsanchez.azurecr.io -u ${{ secrets.ARM_CLIENT_ID }} -p ${{ secrets.ARM_CLIENT_SECRET }}
           
           docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
 
       - name: Pushear imagen (Backend)
         if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
-          docker login containerregistrvsanchez.azurecr.io -u ${{ secrets.ARM_CLIENT_ID }} -p ${{ secrets.ARM_CLIENT_SECRET }}
 
           docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
