@@ -37,7 +37,7 @@ module "virtual-machine" {
 
 # Poner esto en modulo
 resource "azurerm_container_registry" "acr" {
-  name                = "containerregistrvsanchez"
+  name                = "containerregistryvsanchez"
   resource_group_name = var.rg_group
   location            = var.location
   sku                 = "Basic"
