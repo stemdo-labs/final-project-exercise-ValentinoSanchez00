@@ -59,20 +59,12 @@
         line: "listen_addresses = '*'"
         state: present
 
-    - name: Configurar acceso en pg_hba.conf para orquestas (0.0.0.0/0)
+    - name: Configurar acceso en pg_hba.conf para conexiones externas
       become: yes
       lineinfile:
         path: "/etc/postgresql/14/main/pg_hba.conf"
-        regexp: '^host\s+all\s+orquestas\s+0.0.0.0/0\s+md5'
-        line: "host    all             hall            0.0.0.0/0              md5"
-        state: present
-
-    - name: Configurar acceso en pg_hba.conf para orquestas (10.0.0.4/32)
-      become: yes
-      lineinfile:
-        path: "/etc/postgresql/14/main/pg_hba.conf"
-        regexp: '^host\s+all\s+orquestas\s+10.0.0.4/32\s+md5'
-        line: "host    all             orquestas       10.0.0.4/32            md5"
+        regexp: '^host\s+all\s+all\s+0.0.0.0/0\s+md5'
+        line: "host    all             all             0.0.0.0/0               md5"
         state: present
 
     - name: Reiniciar el servicio PostgreSQL
