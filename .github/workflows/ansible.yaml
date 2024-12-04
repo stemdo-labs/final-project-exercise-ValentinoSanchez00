@@ -48,6 +48,6 @@ jobs:
       - name: Agregar contraseña del secret
         run: |
           cd ansible
-          echo "${{ secrets.SECRET_ANSIBLE }}" > secreto.txt
+          echo password > secreto.txt
   
  
