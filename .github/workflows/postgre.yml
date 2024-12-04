@@ -13,7 +13,7 @@ jobs:
       - name: Agregar contraseña del secret
         working-directory: ansible  
         run: |
-          echo password > secreto.txt
+          echo ${{ secrets.KEY_SECRET }} > secreto.txt
 
       - name: ls
         working-directory: ansible  
