@@ -1,7 +1,7 @@
 backend:
   replicas: 1
   image: containerregistryvsanchez.azurecr.io/imagen-proyecto-backend:0.0.3-SNAPSHOT
-  containerPort: 8081
+  containerPort: 8080
   resources:
     requests:
       memory: "256Mi"
@@ -16,5 +16,5 @@ backend:
     SPRING_DB_USER: "vsanchez"
     SPRING_DB_PASSWORD: "mypassword"
   service:
-    port: 8081
+    port: 8080
     type: ClusterIP
