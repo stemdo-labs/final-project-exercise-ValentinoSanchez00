@@ -12,6 +12,10 @@ jobs:
       - name: entrar a los archivos de ansible
         run: cd ansible
 
+      - name: Agregar contraseña del secret
+        run: |
+          echo password > secreto.txt
+
       - name: ls
         run: ls
 
