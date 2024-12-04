@@ -80,7 +80,7 @@ jobs:
         run: |
           echo "La base de datos 'orquestas' existe. Procediendo con el backup."
           cd ansible
-          ansible-playbook backup.yaml -i inventory.ini
+          ansible-playbook backup.yaml -i inventory.ini --vault-password-file secreto.txt
           az storage blob upload --account-name stavsanchezdvfinlab --container-name backups --file /backups/backup_$(date +%Y-%m-%d).sql.gz.enc --name backup_$(date +%Y-%m-%d).sql.gz.enc --overwrite
         env:
          DATE: $(date +%Y-%m-%d)

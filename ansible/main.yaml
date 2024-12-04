@@ -4,8 +4,8 @@
 
   vars:
     postgres_user: vsanchez
-    postgres_db: orquestas
-    postgres_password: mypassword
+  vars_files:
+    - secrets.yml
 
   tasks:
     - name: Actualizar el repositorio de paquetes
@@ -31,7 +31,7 @@
       become: true
       become_user: postgres
       postgresql_db:
-        name: "{{ postgres_db }}"
+        name: "{{ db_name }}"
         owner: "postgres"
         encoding: "UTF8"
         state: present
@@ -41,7 +41,7 @@
       become_user: postgres
       postgresql_user:
         name: "{{ postgres_user }}"
-        password: "{{ postgres_password }}"
+        password: "{{ db_password }}"
         role_attr_flags: SUPERUSER
         state: present
 
@@ -49,7 +49,7 @@
       become: true
       become_user: postgres
       shell: |
-        psql -c "ALTER DATABASE {{ postgres_db }} OWNER TO {{ postgres_user }};"
+        psql -c "ALTER DATABASE {{ db_name }} OWNER TO {{ postgres_user }};"
 
     - name: Configurar listen_addresses = '*' en postgresql.conf
       become: yes
