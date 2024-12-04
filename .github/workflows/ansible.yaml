@@ -45,9 +45,6 @@ jobs:
       - name: Install Azure Collection
         run: ansible-galaxy collection install azure.azcollection
 
-      - name: Agregar contraseña del secret
-        run: |
-          cd ansible
-          echo password > secreto.txt
+      
   
  
