@@ -42,7 +42,7 @@
       when: backup_result.rc == 0
 
     - name: Subirlo al contenedor
-      run: |
+      shell: |
        az storage blob upload --account-name stavsanchezdvfinlab --container-name backup --file {{ backup_file }} --name vsanchezbd-backup.sql.gz.enc --overwrite
  
 
