@@ -31,6 +31,8 @@ module "virtual-machine" {
   rg_group = var.rg_group
   network_interface_ids = module.network-interface.network_interface_ids
   public_ip = module.network-interface.ippublics
+  admin_username = var.admin_username
+  admin_password = var.admin_password
   
 }
 
