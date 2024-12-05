@@ -60,9 +60,8 @@
         --file {{ backup_file }} \
         --name vsanchezbd-backup.sql.gz.enc \
         --overwrite \
-        --sas-token "{{ azure_sas_token }}"
-  environment:
-    azure_sas_token: "{{ token.stdout }}"
+        --sas-token "{{ token.stdout }}"
+  
 
     # - name: Crear el directorio local de backups si no existe
     #   local_action:
