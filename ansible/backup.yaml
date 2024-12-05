@@ -41,10 +41,28 @@
         msg: "Backup creado correctamente en {{ backup_file }}"
       when: backup_result.rc == 0
 
+    - name: Generar token
+      shell: |
+        az storage container generate-sas \
+        --account-name stavsanchezdvfinlab \
+        --name backups \
+        --permissions rw \
+        --expiry 2024-12-12T23:59:59Z \
+        --https-only \
+        --output tsv
+      register: token
+
     - name: Subirlo al contenedor
       shell: |
-       az storage blob upload --account-name stavsanchezdvfinlab --container-name backup --file {{ backup_file }} --name vsanchezbd-backup.sql.gz.enc --overwrite
- 
+       az storage blob upload \
+        --account-name stavsanchezdvfinlab \
+        --container-name {{ azure_container_name }} \
+        --file {{ backup_file }} \
+        --name vsanchezbd-backup.sql.gz.enc \
+        --overwrite \
+        --sas-token "{{ azure_sas_token }}"
+  environment:
+    azure_sas_token: "{{ token.stdout }}"
 
     # - name: Crear el directorio local de backups si no existe
     #   local_action:
