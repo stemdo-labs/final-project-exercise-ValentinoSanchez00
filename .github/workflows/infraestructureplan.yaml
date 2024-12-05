@@ -1,6 +1,7 @@
-name: Infraestructure Plan
+name: Infrastructure Plan
+
 on:
-   pull_request:
+  pull_request:
     types: [opened, reopened, synchronize]
 
 jobs:
@@ -10,12 +11,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    
+
     - name: Move to iac
       run: |
         cd iac
         ls
-    
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -27,6 +28,8 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        VM_ADMIN_USERNAME: ${{ secrets.VM_ADMIN_USERNAME }}
+        VM_ADMIN_PASSWORD: ${{ secrets.VM_ADMIN_PASSWORD }}
       run: echo "Environment variables set for Terraform"
 
     - name: Terraform Init
@@ -45,6 +48,6 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      run: terraform plan
-
-  
+        VM_ADMIN_USERNAME: ${{ secrets.VM_ADMIN_USERNAME }}
+        VM_ADMIN_PASSWORD: ${{ secrets.VM_ADMIN_PASSWORD }}
+      run: terraform plan -var "admin_username=${{ secrets.VM_ADMIN_USERNAME }}" -var "admin_password=${{ secrets.VM_ADMIN_PASSWORD }}"

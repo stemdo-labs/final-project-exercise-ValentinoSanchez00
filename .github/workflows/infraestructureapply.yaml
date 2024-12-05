@@ -46,4 +46,6 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      run: terraform apply  -auto-approve
+        VM_ADMIN_USERNAME: ${{ secrets.VM_ADMIN_USERNAME }}
+        VM_ADMIN_PASSWORD: ${{ secrets.VM_ADMIN_PASSWORD }}
+      run: terraform apply  -var "admin_username=${{ secrets.VM_ADMIN_USERNAME }}" -var "admin_password=${{ secrets.VM_ADMIN_PASSWORD }}" -auto-approve
