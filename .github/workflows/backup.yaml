@@ -75,12 +75,16 @@ jobs:
         #-  AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
 
       # Bloque de backup
+      - name: crear secreto.txt
+        working-directory: ansible
+        run: |
+          echo ${{ secrets.KEY_SECRET }} > ansible/secreto.txt
+          
       - name: Continuar con el flujo de backup si la base de datos existe
         #- if: env.DB_EXISTS == 'true'
         run: |
           echo "La base de datos 'orquestas' existe. Procediendo con el backup."
           cd ansible
           ansible-playbook backup.yaml -i inventory.ini --vault-password-file secreto.txt
-          az storage blob upload --account-name stavsanchezdvfinlab --container-name backups --file /backups/backup_$(date +%Y-%m-%d).sql.gz.enc --name backup_$(date +%Y-%m-%d).sql.gz.enc --overwrite
         env:
          DATE: $(date +%Y-%m-%d)
