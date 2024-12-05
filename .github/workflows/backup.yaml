@@ -82,7 +82,7 @@ jobs:
       - name: crear secreto.txt
         working-directory: ansible
         run: |
-          echo ${{ secrets.KEY_SECRET }} > ansible/secreto.txt
+          echo ${{ secrets.KEY_SECRET }} > secreto.txt
 
       - name: Continuar con el flujo de backup si la base de datos existe
         working-directory: ansible
