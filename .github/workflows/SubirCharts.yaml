@@ -6,6 +6,9 @@ on:
       MICROSERVICE:
         required: true
         type: string
+      VERSION_CHART:
+        required: true
+        type: string
     secrets:
       TOKEN_GITHUB:
         required: true
