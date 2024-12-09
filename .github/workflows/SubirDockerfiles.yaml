@@ -23,11 +23,14 @@ jobs:
       - name: Checkout 
         uses: actions/checkout@v3
       
-      - name: realizar test de buen codigo
+      - name: Configurar linter y realizar análisis de código
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          echo "Realizando test de buen codigo"
-          sleep 30
+          echo "Configurando y ejecutando linter"
+          npm install eslint --save-dev
+          npx eslint --init
+          # Configurar ESLint automáticamente si es necesario
+          npx eslint . --ext .js,.jsx,.ts,.tsx
 
       
       - name: ls
