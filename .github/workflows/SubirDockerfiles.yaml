@@ -1,4 +1,4 @@
-name: Reusable Subir imagen
+name: Reusable Subir Imagen
 
 on:
   workflow_call:
@@ -9,16 +9,7 @@ on:
       ENVIRONMENT:
         required: true
         type: string
-    secrets:
-      ARM_CLIENT_ID:
-        required: true
-      ARM_CLIENT_SECRET:
-        required: true
-      ARM_TENANT_ID:
-        required: true
-      ARM_SUBSCRIPTION_ID:
-        required: true
-      
+
 jobs:
   subirImagen:
     environment: ${{ inputs.ENVIRONMENT }}
@@ -26,44 +17,41 @@ jobs:
     steps:
       - name: Checkout 
         uses: actions/checkout@v3
-      
+
       - name: Configurar linter y realizar análisis de código
-        
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
           echo "Configurando y ejecutando linter"
           npm install eslint --save-dev
           npx eslint --init
-          # Configurar ESLint automáticamente si es necesario
           npx eslint . --ext .js,.jsx,.ts,.tsx
 
-      
-      - name: ls
+      - name: Mostrar archivos
         run: ls
-      
-      - name: echo secrets
+
+      - name: Mostrar secretos
         run: |
-          echo "ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}"
-          echo "ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}"
-          echo "ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}"
-          echo "ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}"
-      
-      - name: Install Azure
+          echo "ARM_CLIENT_ID: $ARM_CLIENT_ID"
+          echo "ARM_CLIENT_SECRET: [OCULTO]"
+          echo "ARM_TENANT_ID: $ARM_TENANT_ID"
+          echo "ARM_SUBSCRIPTION_ID: $ARM_SUBSCRIPTION_ID"
+
+      - name: Instalar CLI de Azure
         run: |
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-      - name: Azure Login
+      - name: Iniciar sesión en Azure
         uses: azure/login@v1
         with:
           creds: |
             {
-              "clientId": "${{ secrets.ARM_CLIENT_ID }}",
-              "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
-              "tenantId": "${{ secrets.ARM_TENANT_ID }}",
-              "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+              "clientId": "$ARM_CLIENT_ID",
+              "clientSecret": "$ARM_CLIENT_SECRET",
+              "tenantId": "$ARM_TENANT_ID",
+              "subscriptionId": "$ARM_SUBSCRIPTION_ID"
             }
-      
-      - name: Login AZR
+
+      - name: Login en Azure Container Registry
         run: |
           az acr login --name containerregistryvsanchez
 
@@ -74,38 +62,33 @@ jobs:
         with:
           path: ./package.json
 
-      
       - name: Extraer versión desde pom.xml (Backend)
         if: ${{ inputs.MICROSERVICE == 'backend' }}
         uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/backend@develop
         id: backend-version
         with:
           path: ./pom.xml
-      
+
       - name: Construir imagen
         run: |
           docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
 
-      
-        
-      - name: taggear la imagen
+      - name: Etiquetar la imagen (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
           docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
-      
-      - name: taggear la imagen
+
+      - name: Etiquetar la imagen (Backend)
         if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
           docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
-      
+
       - name: Pushear imagen (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          
           docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
 
       - name: Pushear imagen (Backend)
         if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
-
           docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
