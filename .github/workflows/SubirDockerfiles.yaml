@@ -6,9 +6,10 @@ on:
       MICROSERVICE:
         required: true
         type: string
-      ENVIRONMENT:
+      ENVIROMENT:
         required: true
         type: string
+
 
 jobs:
   subirImagen:
