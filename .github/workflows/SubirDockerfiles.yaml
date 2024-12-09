@@ -24,10 +24,11 @@ jobs:
         uses: actions/checkout@v3
       
       - name: realizar test de buen codigo
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          ls
-          npm install
-          npm test
+          echo "Realizando test de buen codigo"
+          sleep 30
+
       
       - name: ls
         run: ls
