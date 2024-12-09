@@ -16,7 +16,7 @@ frontend:
 
 ingress:
   enabled: true
-  host: frontend.local
+  host: frontend
   annotations:
     path: /
   tls: true
