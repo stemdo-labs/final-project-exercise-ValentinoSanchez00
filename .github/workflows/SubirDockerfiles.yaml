@@ -23,6 +23,11 @@ jobs:
       - name: Checkout 
         uses: actions/checkout@v3
       
+      - name: realizar test de buen codigo
+        run: |
+          npm install
+          npm test
+      
       - name: ls
         run: ls
       
