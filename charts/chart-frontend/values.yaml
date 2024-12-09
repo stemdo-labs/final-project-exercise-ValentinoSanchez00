@@ -1,4 +1,4 @@
-
+# Values.yaml
 frontend:
   replicas: 2
   image: containerregistryvsanchez.azurecr.io/imagen-proyecto-frontend
@@ -16,7 +16,7 @@ frontend:
 
 ingress:
   enabled: true
-  host: frontend.local
+  host: frontend
   annotations:
     path: /
   tls: true
