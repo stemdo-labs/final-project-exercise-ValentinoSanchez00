@@ -13,3 +13,12 @@ frontend:
   service:
     port: 80
     type: LoadBalancer
+
+ingress:
+  enabled: true
+  host: frontend.local
+  annotations:
+    path: /
+  tls: true
+  tlsSecretName: example-tls-secret
+
