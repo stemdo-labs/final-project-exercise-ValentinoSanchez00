@@ -25,6 +25,7 @@ jobs:
       
       - name: realizar test de buen codigo
         run: |
+          ls
           npm install
           npm test
       
