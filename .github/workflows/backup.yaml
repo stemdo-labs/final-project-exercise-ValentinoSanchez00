@@ -63,7 +63,7 @@ jobs:
       #-    cat db_status.env >> $GITHUB_ENV 
 
       # Bloque de recuperación
-      #- name: Recuperar la base de datos si no existe
+      #- name: Recuperar la base de datos si no existe la base de datos
        #- if: env.DB_EXISTS == 'false'
        #- run: |
        #-   echo "La base de datos 'orquestas' no existe. Recuperando el último backup..."
