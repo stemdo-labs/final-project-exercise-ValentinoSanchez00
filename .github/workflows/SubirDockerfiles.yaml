@@ -6,6 +6,9 @@ on:
       MICROSERVICE:
         required: true
         type: string
+      ENVIRONMENT:
+        required: true
+        type: string
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -18,12 +21,14 @@ on:
       
 jobs:
   subirImagen:
+    environment: ${{ inputs.ENVIRONMENT }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 
         uses: actions/checkout@v3
       
       - name: Configurar linter y realizar análisis de código
+        
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
           echo "Configurando y ejecutando linter"
