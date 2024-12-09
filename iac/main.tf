@@ -68,8 +68,8 @@ resource "azurerm_network_security_group" "securitygroup" {
   }
 }
 
-#resource "azurerm_subnet_network_security_group_association" "assosiaton" {
-#  subnet_id                 = "/subscriptions/86f76907-b9d5-46fa-a39d-aff8432a1868/resourceGroups/final-project-common/providers/Microsoft.Network/virtualNetworks/vnet-common-bootcamp/subnets/sn-vsanchez"
-#  network_security_group_id = azurerm_network_security_group.securitygroup.id
-#}
+resource "azurerm_subnet_network_security_group_association" "assosiaton" {
+  subnet_id                 = "/subscriptions/86f76907-b9d5-46fa-a39d-aff8432a1868/resourceGroups/final-project-common/providers/Microsoft.Network/virtualNetworks/vnet-common-bootcamp/subnets/sn-vsanchez"
+  network_security_group_id = azurerm_network_security_group.securitygroup.id
+}
 
