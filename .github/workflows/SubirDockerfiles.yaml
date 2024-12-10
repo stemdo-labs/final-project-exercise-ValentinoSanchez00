@@ -137,24 +137,24 @@ jobs:
 
       - name: Construir imagen
         run: |
-          docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
+          docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }} .
 
       - name: taggear la imagen
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.frontend-version.outputs.version }}
       
       - name: taggear la imagen
         if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.backend-version.outputs.version }}
       
       - name: Pushear imagen (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.frontend-version.outputs.version }}
 
       - name: Pushear imagen (Backend)
         if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
-          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.backend-version.outputs.version }}
