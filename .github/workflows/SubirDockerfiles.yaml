@@ -29,6 +29,22 @@ on:
         required: true
 
 jobs:
+  set-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+    steps:
+      - name: Determinar el ambiente (Environment)
+        id: set-env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "environment=production" >> $GITHUB_ENV
+            echo "::set-output name=environment::production"
+          else
+            echo "environment=develop" >> $GITHUB_ENV
+            echo "::set-output name=environment::develop"
+          fi
+
   testFrontend:
     if: ${{ inputs.MICROSERVICE == 'frontend' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -58,10 +74,10 @@ jobs:
 
   subirImagen:
     env:
-      ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || 'develop' }}
-    needs: [testFrontend, testBackend]
+      ENVIRONMENT: develop    
+    needs: [testFrontend, testBackend, set-environment]
     if: always()
-    environment: ${{ env.ENVIRONMENT }}
+    environment: ${{ needs.set-environment.outputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 
