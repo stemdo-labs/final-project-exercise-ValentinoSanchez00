@@ -72,6 +72,15 @@ jobs:
       - name: Checkout 
         uses: actions/checkout@v3
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+ 
+      - name: Run Maven tests
+        run: mvn test
+
   subirImagen:
     env:
       ENVIRONMENT: develop    
@@ -82,10 +91,14 @@ jobs:
     steps:
       - name: Checkout 
         uses: actions/checkout@v3
-
+      
       - name: Mostrar archivos
         run: ls
-
+      
+      - name: Configurar archivo default.conf según el environment
+        run: |
+          echo "Configurando default.conf para el entorno ${{ needs.set-environment.outputs.environment }}"
+          sed -i "s|proxy_pass http://svc-backend:8080;|proxy_pass http://${{ needs.set-environment.outputs.environment }}-svc-backend:8080;|g" default.conf
 
       - name: Instalar CLI de Azure
         run: |
@@ -106,14 +119,41 @@ jobs:
         run: |
           az acr login --name containerregistryvsanchez
 
+      - name: Extraer versión desde package.json (Frontend)
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+        uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/frontend@develop
+        id: frontend-version
+        with:
+          path: ./package.json
+
+      
+      - name: Extraer versión desde pom.xml (Backend)
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
+        uses: stemdo-labs/final-project-exercise-ValentinoSanchez00/.github/actions/backend@develop
+        id: backend-version
+        with:
+          path: ./pom.xml
+
       - name: Construir imagen
         run: |
           docker build -t imagen-proyecto-${{ inputs.MICROSERVICE }} .
 
-      - name: Etiquetar la imagen
+      - name: taggear la imagen
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ github.sha }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
+      
+      - name: taggear la imagen
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
+        run: |
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
+      
+      - name: Pushear imagen (Frontend)
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+        run: |
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.frontend-version.outputs.version }}
 
-      - name: Pushear imagen
+      - name: Pushear imagen (Backend)
+        if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
-          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ github.sha }}
+          docker push containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}:${{ steps.backend-version.outputs.version }}
