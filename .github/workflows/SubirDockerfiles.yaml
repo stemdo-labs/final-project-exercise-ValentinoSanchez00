@@ -33,6 +33,16 @@ on:
 
 
 jobs:
+  echoVars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - name: Imprimir variables
+        run: |
+          echo "MICROSERVICE: ${{ inputs.MICROSERVICE }}"
+          echo "ENVIRONMENT: ${{ inputs.ENVIRONMENT }}"
   testFrontend:
     if: ${{ inputs.MICROSERVICE == 'frontend' && inputs.ENVIRONMENT == 'production' }}
     runs-on: ubuntu-latest
