@@ -42,7 +42,7 @@ jobs:
       - name: Imprimir variables
         run: |
           echo "MICROSERVICE: ${{ inputs.MICROSERVICE }}"
-          echo "ENVIRONMENT: ${{ inputs.ENVIRONMENT }}"
+          echo "${{ github.ref == 'refs/heads/main' && 'production' || 'develop' }}"
   testFrontend:
     if: ${{ inputs.MICROSERVICE == 'frontend' && inputs.ENVIRONMENT == 'production' }}
     runs-on: ubuntu-latest
