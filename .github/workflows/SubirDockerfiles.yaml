@@ -32,7 +32,7 @@ env:
 
 jobs:
   testFrontend:
-    if: ${{ inputs.MICROSERVICE == 'frontend' && $ENVIRONMENT == 'production' }}
+    if: ${{ inputs.MICROSERVICE == 'frontend' && env.ENVIRONMENT == 'production' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 
@@ -47,7 +47,7 @@ jobs:
           npx eslint . --ext .js,.jsx,.ts,.tsx
   
   testBackend:
-    if: ${{ inputs.MICROSERVICE == 'backend' && $ENVIRONMENT == 'production' }}
+    if: ${{ inputs.MICROSERVICE == 'backend' && env.ENVIRONMENT == 'production' }}
     runs-on: ubuntu-latest
     env:
       SPRING_DB_HOST: ${{ inputs.DB_HOST }}
@@ -62,7 +62,7 @@ jobs:
   subirImagen:
     needs: [testFrontend,testBackend]
     if: always()
-    environment: $ENVIRONMENT 
+    environment: env.ENVIRONMENT 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 
@@ -70,7 +70,7 @@ jobs:
 
       
       - name: Test backend
-        if: ${{ inputs.MICROSERVICE == 'backend'&& $ENVIRONMENT == 'production' }}
+        if: ${{ inputs.MICROSERVICE == 'backend'&& env.ENVIRONMENT == 'production' }}
         run: |
 
       - name: Mostrar archivos
