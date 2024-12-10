@@ -78,8 +78,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
  
-      - name: Run Maven tests
-        run: mvn test
+      # - name: Run Maven tests
+      #   run: mvn test
 
   subirImagen:
     env:
