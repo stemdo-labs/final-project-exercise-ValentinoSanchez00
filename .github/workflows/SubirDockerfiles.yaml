@@ -96,6 +96,7 @@ jobs:
         run: ls
       
       - name: Configurar archivo default.conf según el environment
+        if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
           echo "Configurando default.conf para el entorno ${{ needs.set-environment.outputs.environment }}"
           sed -i "s|proxy_pass http://svc-backend:8080;|proxy_pass http://${{ needs.set-environment.outputs.environment }}-svc-backend:8080;|g" default.conf
