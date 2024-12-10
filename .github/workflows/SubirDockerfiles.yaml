@@ -142,12 +142,12 @@ jobs:
       - name: taggear la imagen
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.frontend-version.outputs.version }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.frontend-version.outputs.version }}
       
       - name: taggear la imagen
         if: ${{ inputs.MICROSERVICE == 'backend' }}
         run: |
-          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.backend-version.outputs.version }}
+          docker tag imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }} containerregistryvsanchez.azurecr.io/imagen-proyecto-${{ inputs.MICROSERVICE }}-${{ needs.set-environment.outputs.environment }}:${{ steps.backend-version.outputs.version }}
       
       - name: Pushear imagen (Frontend)
         if: ${{ inputs.MICROSERVICE == 'frontend' }}
