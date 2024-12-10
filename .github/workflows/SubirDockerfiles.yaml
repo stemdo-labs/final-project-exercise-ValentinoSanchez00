@@ -6,9 +6,6 @@ on:
       MICROSERVICE:
         required: true
         type: string
-      ENVIROMENT:
-        required: true
-        type: string
       DB_HOST: 
         required: true
         type: string
@@ -30,25 +27,17 @@ on:
         required: true
       DB_PASSWORD:
         required: true
-
+env:
+  ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || 'develop' }} 
 
 jobs:
-  echoVars:
+  testFrontend:
+    if: ${{ inputs.MICROSERVICE == 'frontend' && $ENVIRONMENT == 'production' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 
         uses: actions/checkout@v3
 
-      - name: Imprimir variables
-        run: |
-          echo "MICROSERVICE: ${{ inputs.MICROSERVICE }}"
-          echo "${{ github.ref == 'refs/heads/main' && 'production' || 'develop' }}"
-  testFrontend:
-    if: ${{ inputs.MICROSERVICE == 'frontend' && inputs.ENVIRONMENT == 'production' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout 
-        uses: actions/checkout@v3
 
       - name: Test frontend
         run: |
@@ -58,7 +47,7 @@ jobs:
           npx eslint . --ext .js,.jsx,.ts,.tsx
   
   testBackend:
-    if: ${{ inputs.MICROSERVICE == 'backend' && inputs.ENVIRONMENT == 'production' }}
+    if: ${{ inputs.MICROSERVICE == 'backend' && $ENVIRONMENT == 'production' }}
     runs-on: ubuntu-latest
     env:
       SPRING_DB_HOST: ${{ inputs.DB_HOST }}
@@ -73,7 +62,7 @@ jobs:
   subirImagen:
     needs: [testFrontend,testBackend]
     if: always()
-    environment: ${{ inputs.ENVIRONMENT }}
+    environment: $ENVIRONMENT 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 
@@ -81,7 +70,7 @@ jobs:
 
       
       - name: Test backend
-        if: ${{ inputs.MICROSERVICE == 'backend'&& inputs.ENVIRONMENT == 'production' }}
+        if: ${{ inputs.MICROSERVICE == 'backend'&& $ENVIRONMENT == 'production' }}
         run: |
 
       - name: Mostrar archivos
