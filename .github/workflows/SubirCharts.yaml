@@ -72,7 +72,7 @@ jobs:
           ls
           CHART_FILE=$(ls -t *${NAME_CHART}-*.tgz | head -n 1)
           echo "Subiendo chart ${CHART_FILE}"
-          docker push containerregistryvsanchez.azurecr.io/${CHART_FILE}:${{ inputs.VERSION_CHART }}
+          helm push ${CHART_FILE} oci://containerregistryvsanchez.azurecr.io
 
 
           
