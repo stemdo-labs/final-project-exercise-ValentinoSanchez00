@@ -1,19 +1,17 @@
-name: subirarchivos del chart
+name: subir archivos del chart
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       MICROSERVICE:
+        description: "Nombre del microservicio"
         required: true
         type: string
       VERSION_CHART:
+        description: "Version del chart"
         required: true
         type: string
-    secrets:
-      TOKEN_GITHUB:
-        required: true
-      HARBOR_PASSWORD:
-        required: true
+ 
 jobs:
   empaquetarysubir:
     runs-on: ubuntu-latest
@@ -33,8 +31,28 @@ jobs:
         run: |
           cd charts/
           helm package ./chart-${{ inputs.MICROSERVICE }} 
+      - name: Instalar CLI de Azure
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+      - name: Iniciar sesión en Azure
+        uses: azure/login@v1
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.ARM_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.ARM_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+            }
+
+      - name: Login en Azure Container Registry
+        run: |
+          az acr login --name containerregistryvsanchez
 
       - name: Subir
+        # helm registry login harbor.codeops.es -u vsanchez -p $HARBOR_PASSWORD
+        #  helm push $CHART_FILE oci://harbor.codeops.es/vsanchez
         env:
           HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
           NAME_CHART: ${{ inputs.MICROSERVICE }}
@@ -43,5 +61,7 @@ jobs:
           ls
           CHART_FILE=$(ls -t *${NAME_CHART}-*.tgz | head -n 1)
           echo "Subiendo chart ${CHART_FILE}"
-          helm registry login harbor.codeops.es -u vsanchez -p $HARBOR_PASSWORD
-          helm push $CHART_FILE oci://harbor.codeops.es/vsanchez
+          docker push containerregistryvsanchez.azurecr.io/${CHART_FILE}:${{ inputs.VERSION_CHART }}
+
+
+          
