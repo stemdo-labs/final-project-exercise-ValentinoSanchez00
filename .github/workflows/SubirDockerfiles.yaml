@@ -9,6 +9,12 @@ on:
       ENVIROMENT:
         required: true
         type: string
+      DB_HOST: 
+        required: true
+        type: string
+      DB_PORT: 
+        required: true
+        type: string
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -18,23 +24,54 @@ on:
         required: true
       ARM_SUBSCRIPTION_ID:  
         required: true
+      DB_NAME:
+        required: true
+      DB_USER:
+        required: true
+      DB_PASSWORD:
+        required: true
 
 
 jobs:
+  testFrontend:
+    if: ${{ inputs.MICROSERVICE == 'frontend' && inputs.ENVIRONMENT == 'production' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - name: Test frontend
+        run: |
+          echo "Configurando y ejecutando linter"
+          npm install eslint --save-dev
+          npx eslint --init
+          npx eslint . --ext .js,.jsx,.ts,.tsx
+  
+  testBackend:
+    if: ${{ inputs.MICROSERVICE == 'backend' && inputs.ENVIRONMENT == 'production' }}
+    runs-on: ubuntu-latest
+    env:
+      SPRING_DB_HOST: ${{ inputs.DB_HOST }}
+      SPRING_DB_PORT: ${{ inputs.DB_PORT }}
+      SPRING_DB_NAME: ${{ secrets.DB_NAME }}
+      SPRING_DB_USER: ${{ secrets.DB_USER }}
+      SPRING_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
   subirImagen:
+    needs: [testFrontend, testBackend]
     environment: ${{ inputs.ENVIRONMENT }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 
         uses: actions/checkout@v3
 
-      - name: Configurar linter y realizar análisis de código
-        if: ${{ inputs.MICROSERVICE == 'frontend' }}
+      
+      - name: Test backend
+        if: ${{ inputs.MICROSERVICE == 'backend'&& inputs.ENVIRONMENT == 'production' }}
         run: |
-          echo "Configurando y ejecutando linter"
-          npm install eslint --save-dev
-          npx eslint --init
-          npx eslint . --ext .js,.jsx,.ts,.tsx
 
       - name: Mostrar archivos
         run: ls
