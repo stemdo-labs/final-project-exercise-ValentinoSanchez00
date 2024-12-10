@@ -1,4 +1,4 @@
-name: subirarchivos del chart
+name: subir archivos del chart
 
 on:
   workflow_dispatch:
