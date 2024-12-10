@@ -1,16 +1,18 @@
-name: subir archivos del chart
-
+name: subirarchivos del chart
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       MICROSERVICE:
-        description: "Nombre del microservicio"
         required: true
         type: string
       VERSION_CHART:
-        description: "Version del chart"
         required: true
         type: string
+    secrets:
+      TOKEN_GITHUB:
+        required: true
+      HARBOR_PASSWORD:
+        required: true
  
 jobs:
   empaquetarysubir:
