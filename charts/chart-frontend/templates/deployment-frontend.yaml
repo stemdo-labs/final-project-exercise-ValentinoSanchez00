@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{.Release.Name}}-frontend
+  name: {{.Release.Name}}
   labels:
     app: frontend
 spec:
@@ -15,7 +15,7 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: {{ .Release.Name }}-frontend
+      - name: {{ .Release.Name }}
         image: {{ .Values.frontend.image }}
         ports:
         - containerPort: {{ .Values.frontend.containerPort }}
