@@ -14,24 +14,6 @@ frontend:
     port: 80
     type: LoadBalancer
 
-ingress:
-  enabled: true
-  annotations:
-    ingress: "nginx" 
-  paths:
-    - path: /dev
-      pathType: Prefix
-      backend:
-        service:
-          name: frontend-develop-svc
-          port:
-            number: 80
-    - path: /prod
-      pathType: Prefix
-      backend:
-        service:
-          name: frontend-production-svc
-          port:
-            number: 80
+
 
 
