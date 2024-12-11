@@ -16,9 +16,22 @@ frontend:
 
 ingress:
   enabled: true
-  host: frontend
   annotations:
-    path: /
-  tls: true
-  tlsSecretName: example-tls-secret
+    ingress: "nginx" 
+  paths:
+    - path: /dev
+      pathType: Prefix
+      backend:
+        service:
+          name: frontend-develop-svc
+          port:
+            number: 80
+    - path: /prod
+      pathType: Prefix
+      backend:
+        service:
+          name: frontend-production-svc
+          port:
+            number: 80
+
 
