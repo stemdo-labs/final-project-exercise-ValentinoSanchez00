@@ -102,14 +102,14 @@ jobs:
           sed -i "s|proxy_pass http://svc-backend:8080;|proxy_pass http://backend-${{ needs.set-environment.outputs.environment }}-svc:8080;|g" default.conf
 
       - name: Configurar location 
-        if: ${{ inputs.MICROSERVICE == 'frontend' && ${{ needs.set-environment.outputs.environment }} == 'develop' }}
+        if: ${{ inputs.MICROSERVICE == 'frontend' &&  needs.set-environment.outputs.environment  == 'develop' }}
         run: |
           echo "Configurando location para el entorno ${{ needs.set-environment.outputs.environment }}"
           sed -i "s|location /pepe-vsanchez |location /dev-vsanchez |g" default.conf
           sed -i "s|proxy_pass http://backend-pepe-svc:8080; |proxy_pass http://backend-develop-svc:8080; |g" default.conf
 
       - name: Configurar location 
-        if: ${{ inputs.MICROSERVICE == 'frontend' && ${{ needs.set-environment.outputs.environment }} == 'production' }}
+        if: ${{ inputs.MICROSERVICE == 'frontend' && $ needs.set-environment.outputs.environment  == 'production' }}
         run: |
           echo "Configurando location para el entorno ${{ needs.set-environment.outputs.environment }}"
           sed -i "s|location /pepe-vsanchez |location /prod-vsanchez |g" default.conf
